@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gas/constants.dart';
-import 'package:gas/helpers/lists.dart';
 import 'package:gas/models/provider_model.dart';
+import 'package:gas/providers/gas_providers.dart';
 import 'package:gas/providers/location_provider.dart';
 import 'package:gas/screens/home/home_app_bar.dart';
 import 'package:gas/screens/home/homepage_provider_widget.dart';
@@ -34,7 +34,10 @@ class _HomepageState extends State<Homepage> {
         .loadString('assets/map_style.json');
     _controller!.setMapStyle(value);
 
-    for (ProviderModel provider in allProviders) {
+    final providers =
+        Provider.of<GasProviders>(context, listen: false).providers;
+
+    for (ProviderModel provider in providers) {
       _markers.add(
         Marker(
           markerId: MarkerId(provider.id!),
@@ -44,7 +47,7 @@ class _HomepageState extends State<Homepage> {
             });
 
             _scrollController.animateTo(
-              allProviders.indexOf(provider) *
+              providers.indexOf(provider) *
                       MediaQuery.of(context).size.width *
                       .85 +
                   40,
@@ -72,6 +75,8 @@ class _HomepageState extends State<Homepage> {
     Provider.of<LocationProvider>(context, listen: false).getCurrentLocation();
     final locData =
         Provider.of<LocationProvider>(context, listen: false).locationData!;
+    final providers =
+        Provider.of<GasProviders>(context, listen: false).providers;
 
     return Scaffold(
       drawer: const SettingsScreen(),
@@ -113,10 +118,10 @@ class _HomepageState extends State<Homepage> {
                               _controller!.animateCamera(
                                   CameraUpdate.newCameraPosition(CameraPosition(
                                       target: LatLng(
-                                          allProviders[currentIndex]
+                                          providers[currentIndex]
                                               .location!
                                               .latitude,
-                                          allProviders[currentIndex]
+                                          providers[currentIndex]
                                               .location!
                                               .longitude),
                                       zoom: 15)));
@@ -127,10 +132,10 @@ class _HomepageState extends State<Homepage> {
                               _controller!.animateCamera(
                                   CameraUpdate.newCameraPosition(CameraPosition(
                                       target: LatLng(
-                                          allProviders[currentIndex]
+                                          providers[currentIndex]
                                               .location!
                                               .latitude,
-                                          allProviders[currentIndex]
+                                          providers[currentIndex]
                                               .location!
                                               .longitude),
                                       zoom: 15)));
@@ -142,16 +147,16 @@ class _HomepageState extends State<Homepage> {
                             width: 15,
                           ),
                           ...List.generate(
-                              allProviders.length,
+                              providers.length,
                               (index) => GestureDetector(
                                     onTap: () {
                                       setState(() {
-                                        selectedProvider = allProviders[index];
+                                        selectedProvider = providers[index];
                                         isInfo = true;
                                       });
                                     },
                                     child: HomepageProviderWidget(
-                                        provider: allProviders[index]),
+                                        provider: providers[index]),
                                   )),
                         ]),
                   ),

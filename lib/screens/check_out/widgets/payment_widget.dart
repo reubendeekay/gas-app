@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:gas/constants.dart';
@@ -5,6 +7,7 @@ import 'package:gas/models/product_model.dart';
 import 'package:gas/models/request_model.dart';
 import 'package:gas/providers/auth_provider.dart';
 import 'package:gas/providers/location_provider.dart';
+import 'package:gas/providers/request_provider.dart';
 import 'package:gas/screens/check_out/check_out_screen.dart';
 import 'package:gas/screens/trail/trail_screen.dart';
 import 'package:page_transition/page_transition.dart';
@@ -12,9 +15,12 @@ import 'package:provider/provider.dart';
 import 'package:swipeable_button_view/swipeable_button_view.dart';
 
 class PaymentWidget extends StatefulWidget {
-  const PaymentWidget({Key? key, required this.total}) : super(key: key);
+  const PaymentWidget(
+      {Key? key, required this.request, required this.paymentMethod})
+      : super(key: key);
 
-  final double total;
+  final RequestModel request;
+  final String paymentMethod;
 
   @override
   State<PaymentWidget> createState() => _PaymentWidgetState();
@@ -22,6 +28,13 @@ class PaymentWidget extends StatefulWidget {
 
 class _PaymentWidgetState extends State<PaymentWidget> {
   bool isFinished = false;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    widget.request.paymentMethod = widget.paymentMethod;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +53,7 @@ class _PaymentWidgetState extends State<PaymentWidget> {
               style: TextStyle(fontWeight: FontWeight.w600),
             ),
             Text(
-              'KES ${widget.total.toStringAsFixed(2)}',
+              'KES ${widget.request.total!.toStringAsFixed(2)}',
               style: const TextStyle(fontWeight: FontWeight.w600),
             ),
           ],
@@ -67,23 +80,22 @@ class _PaymentWidgetState extends State<PaymentWidget> {
             },
             onFinish: () async {
               final request = RequestModel(
-                driver: user,
                 driverLocation: GeoPoint(loc!.latitude!, loc.longitude!),
                 id: '1',
-                product: ProductModel(),
-                user: user,
-                userLocation: GeoPoint(loc.latitude!, loc.longitude!),
+                products: widget.request.products,
+                user: widget.request.user,
+                userLocation: widget.request.userLocation,
+                paymentMethod: widget.request.paymentMethod,
+                total: widget.request.total,
               );
-
+              await Provider.of<RequestProvider>(context, listen: false)
+                  .sendPurchaseRequest(request);
               await Navigator.push(
                   context,
                   PageTransition(
                       type: PageTransitionType.fade,
-                      child: TrailScreen(
-                        request: request,
-                      )));
+                      child: const TrailScreen()));
 
-              //TODO: For reverse ripple effect animation
               setState(() {
                 isFinished = false;
               });

@@ -1,11 +1,15 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:gas/constants.dart';
+import 'package:gas/providers/auth_provider.dart';
+import 'package:provider/provider.dart';
 
 class SettingsProfileWidget extends StatelessWidget {
   const SettingsProfileWidget({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final user = Provider.of<AuthProvider>(context, listen: false).user;
     return Container(
       padding: const EdgeInsets.all(15),
       decoration: BoxDecoration(
@@ -13,8 +17,9 @@ class SettingsProfileWidget extends StatelessWidget {
       child: Column(children: [
         Row(
           children: [
-            const CircleAvatar(
+            CircleAvatar(
               radius: 30,
+              backgroundImage: CachedNetworkImageProvider(user!.profilePic!),
             ),
             const SizedBox(
               width: 15,
@@ -22,8 +27,8 @@ class SettingsProfileWidget extends StatelessWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  'John Doe',
+                Text(
+                  user.fullName!,
                   style: const TextStyle(
                     fontWeight: FontWeight.w600,
                   ),
@@ -32,7 +37,7 @@ class SettingsProfileWidget extends StatelessWidget {
                   height: 2.5,
                 ),
                 Text(
-                  'test@test.com',
+                  user.email!,
                   style: TextStyle(color: Colors.grey[700]),
                 ),
               ],
@@ -46,22 +51,22 @@ class SettingsProfileWidget extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 9),
             decoration: BoxDecoration(
                 color: kIconColor, borderRadius: BorderRadius.circular(3)),
-            child: Row(children: [
-              const Icon(
+            child: Row(children: const [
+              Icon(
                 Icons.info_outline,
                 color: Colors.white,
                 size: 20,
               ),
-              const SizedBox(
+              SizedBox(
                 width: 15,
               ),
-              const Text(
+              Text(
                 'Regular user',
                 style:
                     TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
               ),
-              const Spacer(),
-              const Text(
+              Spacer(),
+              Text(
                 'Upgrade',
                 style: TextStyle(color: Colors.white, fontSize: 12),
               ),

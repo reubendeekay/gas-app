@@ -2,6 +2,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:gas/models/user_model.dart';
+import 'package:gas/providers/location_provider.dart';
+import 'package:geocoder2/geocoder2.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class AuthProvider with ChangeNotifier {
   UserModel? _user;
@@ -41,16 +44,58 @@ class AuthProvider with ChangeNotifier {
   }
 
   Future<void> getCurrentUser() async {
-    final uid = await FirebaseAuth.instance.currentUser!.uid;
+    final uid = FirebaseAuth.instance.currentUser!.uid;
 
-    _user = await FirebaseFirestore.instance
+    final userData = await FirebaseFirestore.instance
         .collection('users')
         .doc(uid)
         .get()
         .then((value) {
       return UserModel.fromJson(value);
     });
+    final locs = await getUserLocations();
 
+    userData.locations = locs;
+    _user = userData;
     notifyListeners();
+  }
+
+  Future<List<UserLocation>> getUserLocations() async {
+    final uid = FirebaseAuth.instance.currentUser!.uid;
+
+    final locations = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(uid)
+        .collection('locations')
+        .get();
+
+    List<UserLocation> locationData = [];
+
+    for (var doc in locations.docs) {
+      locationData.add(
+        await getLocationDetails(
+          LatLng(doc['location'].latitude, doc['location'].longitude),
+        ),
+      );
+    }
+
+    return locationData;
+  }
+
+  Future<UserLocation> getLocationDetails(LatLng loc) async {
+    GeoData data = await Geocoder2.getDataFromCoordinates(
+        latitude: loc.latitude,
+        longitude: loc.longitude,
+        googleMapApiKey: "AIzaSyDIL1xyrMndlk2dSSSSikdobR8qDjz0jjQ");
+
+    return UserLocation(
+      city: data.city,
+      country: data.country,
+      street: data.street_number,
+      postalCode: data.postalCode,
+      address: data.address,
+      state: data.state,
+      location: LatLng(loc.latitude, loc.longitude),
+    );
   }
 }

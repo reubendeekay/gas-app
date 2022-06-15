@@ -236,25 +236,6 @@ class ProviderInfoEstimateIcon extends StatelessWidget {
   const ProviderInfoEstimateIcon({Key? key, this.provider}) : super(key: key);
   final ProviderModel? provider;
 
-  String calculateTime(LocationData locData) {
-    final distance = calculateDistance(locData.latitude, locData.longitude,
-        provider!.location!.latitude, provider!.location!.longitude);
-
-    final timeInHours = (distance / 45);
-
-    if (timeInHours < 1) {
-      return '${(timeInHours * 60.0).toStringAsFixed(0)} mins';
-    } else if (timeInHours % 1 == 0) {
-      return '${(timeInHours).toStringAsFixed(0)} hrs';
-    } else {
-      final minRem = timeInHours % 1;
-      final hrs = timeInHours.floor();
-      final mins = (minRem * 60).floor();
-
-      return '$hrs hrs $mins mins';
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final locData =
@@ -276,7 +257,10 @@ class ProviderInfoEstimateIcon extends StatelessWidget {
                 style: TextStyle(fontSize: 12, color: Colors.grey),
               ),
               Text(
-                calculateTime(locData!),
+                calculateTime(
+                    LatLng(locData!.latitude!, locData.longitude!),
+                    LatLng(provider!.location!.latitude,
+                        provider!.location!.longitude)),
                 style: const TextStyle(fontWeight: FontWeight.bold),
               )
             ],

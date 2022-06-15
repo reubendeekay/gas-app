@@ -5,6 +5,7 @@ import 'package:gas/providers/auth_provider.dart';
 import 'package:gas/providers/location_provider.dart';
 import 'package:gas/screens/auth/signup.dart';
 import 'package:gas/screens/home/homepage.dart';
+import 'package:gas/widgets/loading_screen.dart';
 import 'package:get/route_manager.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:provider/provider.dart';
@@ -235,7 +236,7 @@ class _LoginPageState extends State<LoginPage> {
                     try {
                       Provider.of<AuthProvider>(context, listen: false)
                           .login(email!, password!);
-                      Get.off(() => const Homepage());
+                      Get.off(() => const InitialLoadingScreen());
                     } catch (e) {
                       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                         content: Text(e.toString()),

@@ -29,7 +29,7 @@ class HomepageProviderWidget extends StatelessWidget {
             height: 80,
             width: 80,
             child: Image.network(
-              provider.imageUrl!,
+              provider.images!.first,
               fit: BoxFit.cover,
             ),
           ),

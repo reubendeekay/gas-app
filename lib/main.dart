@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:gas/constants.dart';
 import 'package:gas/firebase_options.dart';
 import 'package:gas/providers/auth_provider.dart';
+import 'package:gas/providers/gas_providers.dart';
 import 'package:gas/providers/location_provider.dart';
+import 'package:gas/providers/request_provider.dart';
 import 'package:gas/screens/auth/login.dart';
 import 'package:gas/screens/home/homepage.dart';
 import 'package:gas/widgets/loading_screen.dart';
@@ -30,6 +32,8 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (ctx) => LocationProvider()),
         ChangeNotifierProvider(create: (ctx) => AuthProvider()),
+        ChangeNotifierProvider(create: (ctx) => GasProviders()),
+        ChangeNotifierProvider(create: (ctx) => RequestProvider()),
       ],
       child: GetMaterialApp(
           title: 'Flutter Demo',
@@ -61,7 +65,10 @@ class MyApp extends StatelessWidget {
                 return snapshot.hasData
                     ? const InitialLoadingScreen()
                     : const LoginPage();
-              })),
+              })
+
+          // home: const TrailLoadingScreen(),
+          ),
     );
   }
 }

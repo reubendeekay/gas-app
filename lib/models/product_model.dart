@@ -1,18 +1,21 @@
 class ProductModel {
-  final String? id;
+  String? id;
   final String? name;
   final String? category;
   final String? ownerId;
   final String? price;
   final String? description;
+  double quantity;
 
-  ProductModel(
-      {this.id,
-      this.name,
-      this.category,
-      this.ownerId,
-      this.price,
-      this.description});
+  ProductModel({
+    this.id,
+    this.name,
+    this.category,
+    this.ownerId,
+    this.price,
+    this.description,
+    this.quantity = 0,
+  });
 
   Map<String, dynamic> toJson() {
     return {

@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:gas/models/request_model.dart';
 
 class TrailOrderSummaryWidget extends StatelessWidget {
-  const TrailOrderSummaryWidget({Key? key}) : super(key: key);
+  const TrailOrderSummaryWidget({Key? key, required this.request})
+      : super(key: key);
+  final RequestModel request;
 
   @override
   Widget build(BuildContext context) {
@@ -24,20 +27,27 @@ class TrailOrderSummaryWidget extends StatelessWidget {
           const SizedBox(
             height: 15,
           ),
-          ...List.generate(1, (index) => orderItem(index.toString())),
+          ...List.generate(
+              request.products!.length,
+              (index) => orderItem(
+                    index.toString(),
+                    amount: request.products![index].quantity,
+                    title: request.products![index].name!,
+                    description: request.products![index].description!,
+                  )),
           const SizedBox(
             height: 5,
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: const [
-              Text(
+            children: [
+              const Text(
                 'Total',
                 style: TextStyle(fontWeight: FontWeight.w600),
               ),
               Text(
-                'KES 180',
-                style: TextStyle(fontSize: 15),
+                'KES ${request.total!.toStringAsFixed(2)}',
+                style: const TextStyle(fontSize: 15),
               )
             ],
           ),
@@ -49,10 +59,14 @@ class TrailOrderSummaryWidget extends StatelessWidget {
     );
   }
 
-  Widget orderItem(String index) {
+  Widget orderItem(String index,
+      {required String title,
+      required String description,
+      required double amount}) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
@@ -68,26 +82,27 @@ class TrailOrderSummaryWidget extends StatelessWidget {
                 width: 15,
               ),
               Column(
-                children: const [
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
                   Text(
-                    'Super Diesel',
-                    style: TextStyle(
+                    title,
+                    style: const TextStyle(
                       color: Colors.black,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
                   Text(
-                    'Spicy',
-                    style: TextStyle(color: Colors.grey, fontSize: 12),
+                    description,
+                    style: const TextStyle(color: Colors.grey, fontSize: 12),
                   ),
                 ],
               ),
             ],
           ),
-          SizedBox(
+          const SizedBox(
             height: 5,
           ),
-          Divider(),
+          const Divider(),
         ],
       ),
     );

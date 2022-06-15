@@ -1,19 +1,52 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:gas/constants.dart';
 import 'package:gas/helpers/ratings_stars.dart';
+import 'package:gas/models/user_model.dart';
 
-class DriverFoundDialog extends StatefulWidget {
-  const DriverFoundDialog({Key? key}) : super(key: key);
+class DriverFoundeDialog extends StatefulWidget {
+  const DriverFoundeDialog({Key? key, required this.driver}) : super(key: key);
+  final UserModel driver;
 
   @override
-  State<DriverFoundDialog> createState() => _DriverFoundDialogState();
+  State<DriverFoundeDialog> createState() => _DriverFoundeDialogState();
 }
 
-class _DriverFoundDialogState extends State<DriverFoundDialog> {
+class _DriverFoundeDialogState extends State<DriverFoundeDialog> {
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    Future.delayed(Duration.zero, () {
+      showDialog(
+          context: context,
+          builder: (ctx) => Dialog(
+                child: DriverFound(
+                  driver: widget.driver,
+                ),
+              ));
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container();
+  }
+}
+
+class DriverFound extends StatefulWidget {
+  const DriverFound({Key? key, required this.driver}) : super(key: key);
+  final UserModel driver;
+
+  @override
+  State<DriverFound> createState() => _DriverFoundState();
+}
+
+class _DriverFoundState extends State<DriverFound> {
   @override
   void initState() {
     super.initState();
-    Future.delayed(const Duration(seconds: 5), () {
+    Future.delayed(const Duration(seconds: 10), () {
       Navigator.of(context).pop();
     });
   }
@@ -28,8 +61,11 @@ class _DriverFoundDialogState extends State<DriverFoundDialog> {
           children: [
             Row(
               children: [
-                const CircleAvatar(
+                CircleAvatar(
                   radius: 24,
+                  backgroundImage: CachedNetworkImageProvider(
+                    widget.driver.profilePic!,
+                  ),
                 ),
                 const SizedBox(
                   width: 20,
@@ -37,23 +73,23 @@ class _DriverFoundDialogState extends State<DriverFoundDialog> {
                 Expanded(
                     child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: const [
+                  children: [
                     Text(
-                      'Delivery Driver ',
-                      style: TextStyle(
+                      widget.driver.fullName!,
+                      style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
-                    Ratings(
+                    const Ratings(
                       rating: 4.5,
                       size: 14,
                       gesturesDisabled: true,
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 3,
                     ),
-                    Text('KMFF 730P ',
+                    const Text('KMFF 730P ',
                         style: TextStyle(color: Colors.grey, fontSize: 12)),
                   ],
                 )),

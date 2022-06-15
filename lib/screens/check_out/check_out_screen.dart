@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:gas/helpers/lists.dart';
+import 'package:gas/models/request_model.dart';
+import 'package:gas/providers/location_provider.dart';
 import 'package:gas/screens/check_out/widgets/checkout_address.dart';
 import 'package:gas/screens/check_out/widgets/payment_method_widget.dart';
 import 'package:gas/screens/check_out/widgets/payment_widget.dart';
+import 'package:get/get_connect/http/src/request/request.dart';
+import 'package:provider/provider.dart';
 
 class CheckoutScreen extends StatefulWidget {
-  const CheckoutScreen({Key? key}) : super(key: key);
+  const CheckoutScreen({Key? key, required this.request}) : super(key: key);
+  final RequestModel request;
 
   @override
   State<CheckoutScreen> createState() => _CheckoutScreenState();
@@ -16,6 +21,9 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   int selectedPaymentMethod = 0;
   @override
   Widget build(BuildContext context) {
+    final userlocations = Provider.of<LocationProvider>(context, listen: false)
+        .preferredUserLocations();
+
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -39,7 +47,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                     height: 5,
                   ),
                   ...List.generate(
-                    2,
+                    userlocations.length,
                     (index) => GestureDetector(
                       onTap: () {
                         setState(() {
@@ -48,6 +56,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                       },
                       child: CheckoutAddress(
                         isSelected: selectedAddress == index,
+                        address: userlocations[index]['address'],
+                        title: userlocations[index]['title'],
                       ),
                     ),
                   ),
@@ -55,7 +65,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                     height: 25,
                   ),
                   const Text(
-                    'Shipping To',
+                    'Payment Method',
                     style: TextStyle(fontWeight: FontWeight.w500),
                   ),
                   const SizedBox(
@@ -79,7 +89,12 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                   ),
                 ]),
           ),
-          Hero(tag: 'to-payment', child: PaymentWidget(total: 150)),
+          Hero(
+              tag: 'to-payment',
+              child: PaymentWidget(
+                request: widget.request,
+                paymentMethod: paymentMethods[selectedPaymentMethod]['name'],
+              )),
         ],
       ),
     );

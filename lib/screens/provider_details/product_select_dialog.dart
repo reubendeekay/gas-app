@@ -1,8 +1,13 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:gas/constants.dart';
 import 'package:gas/models/product_model.dart';
+import 'package:gas/models/request_model.dart';
+import 'package:gas/providers/auth_provider.dart';
+import 'package:gas/providers/location_provider.dart';
 import 'package:gas/screens/check_out/check_out_screen.dart';
 import 'package:get/route_manager.dart';
+import 'package:provider/provider.dart';
 
 class ProductSelectDialog extends StatefulWidget {
   const ProductSelectDialog({Key? key, required this.product})
@@ -46,6 +51,7 @@ class _ProductSelectDialogState extends State<ProductSelectDialog> {
                       if (litres > 0) {
                         setState(() {
                           litres--;
+                          widget.product.quantity = litres.toDouble();
                         });
                       }
                     },
@@ -71,6 +77,7 @@ class _ProductSelectDialogState extends State<ProductSelectDialog> {
                     onTap: () {
                       setState(() {
                         litres++;
+                        widget.product.quantity = litres.toDouble();
                       });
                     },
                     child: Container(
@@ -113,11 +120,34 @@ class _ProductSelectDialogState extends State<ProductSelectDialog> {
                   onPressed: litres < 1
                       ? null
                       : () {
-                          Get.to(() => const CheckoutScreen());
+                          final user =
+                              Provider.of<AuthProvider>(context, listen: false)
+                                  .user;
+                          final userLocation = Provider.of<LocationProvider>(
+                                  context,
+                                  listen: false)
+                              .locationData!;
+                          final request = RequestModel(
+                            products: [
+                              widget.product,
+                            ],
+                            user: user,
+                            userLocation: GeoPoint(userLocation.latitude!,
+                                userLocation.longitude!),
+                          );
+
+                          request.total = request.products!
+                              .map((product) =>
+                                  product.quantity *
+                                  double.parse(product.price!))
+                              .reduce((a, b) => a + b);
+                          Get.to(() => CheckoutScreen(
+                                request: request,
+                              ));
                         },
                   color: Colors.black,
                   textColor: Colors.white,
-                  child: const Text('Add to cart'),
+                  child: const Text('Checkout'),
                 ),
               ),
             ])),

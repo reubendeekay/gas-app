@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:gas/providers/auth_provider.dart';
+import 'package:gas/providers/location_provider.dart';
+import 'package:provider/provider.dart';
 
 class RecentLocationsScreen extends StatelessWidget {
   const RecentLocationsScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final user = Provider.of<AuthProvider>(context, listen: false).user!;
+    final userLoc =
+        Provider.of<LocationProvider>(context, listen: false).userLocation!;
     return Scaffold(
       appBar: AppBar(
         title: const Text('Location History'),
@@ -33,6 +39,7 @@ class RecentLocationsScreen extends StatelessWidget {
                 decoration: InputDecoration(
                   border: InputBorder.none,
                   hintText: 'Enter a new address',
+                  hintStyle: const TextStyle(fontSize: 14),
                   fillColor: Colors.grey[300],
                   filled: true,
                   prefixIcon: const Icon(
@@ -58,14 +65,15 @@ class RecentLocationsScreen extends StatelessWidget {
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children: const [
+                    children: [
                       Text(
-                        'Shell Gas Station',
-                        style: TextStyle(fontWeight: FontWeight.w600),
+                        userLoc.state!,
+                        style: const TextStyle(fontWeight: FontWeight.w600),
                       ),
                       Text(
-                        'Jogoo Road,Nairobi',
-                        style: TextStyle(color: Colors.grey, fontSize: 12),
+                        userLoc.address!,
+                        style:
+                            const TextStyle(color: Colors.grey, fontSize: 12),
                       )
                     ],
                   ),
@@ -94,12 +102,17 @@ class RecentLocationsScreen extends StatelessWidget {
             style: TextStyle(fontWeight: FontWeight.w600),
           ),
         ),
-        ...List.generate(4, (index) => locationWidget())
+        ...List.generate(
+            user.locations!.length,
+            (index) => locationWidget(
+                  user.locations![index].state!,
+                  user.locations![index].address!,
+                ))
       ]),
     );
   }
 
-  Widget locationWidget() {
+  Widget locationWidget(String title, String subtitle) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 7.5),
       child: Row(children: [
@@ -115,14 +128,15 @@ class RecentLocationsScreen extends StatelessWidget {
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      children: const [
+                      children: [
                         Text(
-                          'Jogoo Lane',
-                          style: TextStyle(fontWeight: FontWeight.w600),
+                          title,
+                          style: const TextStyle(fontWeight: FontWeight.w600),
                         ),
                         Text(
-                          'Jogoo Road,Nairobi',
-                          style: TextStyle(color: Colors.grey, fontSize: 12),
+                          subtitle,
+                          style:
+                              const TextStyle(color: Colors.grey, fontSize: 12),
                         )
                       ],
                     ),
@@ -138,10 +152,10 @@ class RecentLocationsScreen extends StatelessWidget {
                   ),
                 ],
               ),
-              SizedBox(
+              const SizedBox(
                 height: 10,
               ),
-              Divider(),
+              const Divider(),
             ],
           ),
         )

@@ -54,12 +54,24 @@ class _ProviderDetailsScreenState extends State<ProviderDetailsScreen> {
                   backgroundColor: majorColor ?? kIconColor,
                   iconTheme: const IconThemeData(color: Colors.white),
                   flexibleSpace: FlexibleSpaceBar(
-                      expandedTitleScale: 1.1,
-                      title: Text(widget.provider.name!,
-                          style: const TextStyle(
-                              color: Colors.white, fontSize: 16)),
-                      background: Image.network(widget.provider.imageUrl!,
-                          fit: BoxFit.cover)),
+                    expandedTitleScale: 1.1,
+                    title: Text(widget.provider.name!,
+                        style:
+                            const TextStyle(color: Colors.white, fontSize: 16)),
+                    background: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        children: List.generate(
+                          widget.provider.images!.length,
+                          (index) => Image.network(
+                              widget.provider.images![index],
+                              width: size.width,
+                              height: size.height * .4,
+                              fit: BoxFit.cover),
+                        ),
+                      ),
+                    ),
+                  ),
                 ),
               ];
             },

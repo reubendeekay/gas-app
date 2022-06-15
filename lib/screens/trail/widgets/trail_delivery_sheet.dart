@@ -1,14 +1,19 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:gas/models/request_model.dart';
+import 'package:gas/models/user_model.dart';
+import 'package:gas/providers/auth_provider.dart';
+import 'package:gas/providers/location_provider.dart';
+import 'package:gas/providers/request_provider.dart';
 import 'package:gas/screens/trail/widgets/delivery_driver_processing.dart';
 import 'package:gas/screens/trail/widgets/trail_delivery_details_widget.dart';
 import 'package:gas/screens/trail/widgets/trail_order_summary_widget.dart';
+import 'package:provider/provider.dart';
 
 class TrailDeliverySheet extends StatelessWidget {
-  const TrailDeliverySheet({Key? key, this.isDriverFound = false})
-      : super(key: key);
+  const TrailDeliverySheet({Key? key, required this.request}) : super(key: key);
 
-  final bool isDriverFound;
-
+  final RequestModel request;
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -18,8 +23,19 @@ class TrailDeliverySheet extends StatelessWidget {
           SizedBox(
             height: size.height - 225,
           ),
-          !isDriverFound
-              ? const DeliveryDriverProcessing()
+          request.driver == null
+              ? GestureDetector(
+                  onTap: () async {
+                    final user =
+                        Provider.of<AuthProvider>(context, listen: false).user!;
+
+                    final locData =
+                        Provider.of<LocationProvider>(context, listen: false)
+                            .userLocation!;
+                    await Provider.of<RequestProvider>(context, listen: false)
+                        .sendDriverAcceptance(request, user, locData.location!);
+                  },
+                  child: const DeliveryDriverProcessing())
               : Container(
                   width: size.width,
                   decoration: const BoxDecoration(
@@ -47,15 +63,21 @@ class TrailDeliverySheet extends StatelessWidget {
                       const SizedBox(
                         height: 5,
                       ),
-                      const DeliveryDriverWidget(),
+                      DeliveryDriverWidget(
+                        driver: request.driver!,
+                      ),
                       const Divider(
                         thickness: 2,
                       ),
-                      const TrailDeliveryDetailsWidget(),
+                      TrailDeliveryDetailsWidget(
+                        request: request,
+                      ),
                       const Divider(
                         thickness: 2,
                       ),
-                      const TrailOrderSummaryWidget(),
+                      TrailOrderSummaryWidget(
+                        request: request,
+                      ),
                     ],
                   ),
                 ),
@@ -66,7 +88,9 @@ class TrailDeliverySheet extends StatelessWidget {
 }
 
 class DeliveryDriverWidget extends StatelessWidget {
-  const DeliveryDriverWidget({Key? key}) : super(key: key);
+  const DeliveryDriverWidget({Key? key, required this.driver})
+      : super(key: key);
+  final UserModel driver;
 
   @override
   Widget build(BuildContext context) {
@@ -77,25 +101,28 @@ class DeliveryDriverWidget extends StatelessWidget {
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const CircleAvatar(
+              CircleAvatar(
                 radius: 26,
+                backgroundImage: CachedNetworkImageProvider(
+                  driver.profilePic!,
+                ),
               ),
               const SizedBox(
                 width: 20,
               ),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: const [
+                children: [
                   Text(
-                    'Delivery Driver ',
-                    style: TextStyle(fontSize: 16),
+                    driver.fullName!,
+                    style: const TextStyle(fontSize: 16),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 2.5,
                   ),
                   Text(
-                    'KMFF730P ',
-                    style: TextStyle(color: Colors.grey),
+                    driver.plateNumber ?? 'No Plate Number',
+                    style: const TextStyle(color: Colors.grey),
                   ),
                 ],
               )
