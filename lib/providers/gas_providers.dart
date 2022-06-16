@@ -89,4 +89,22 @@ class GasProviders extends ChangeNotifier {
     _providers = allProviders;
     notifyListeners();
   }
+
+  Future<List<ProviderModel>> searchProviders(String searchTerm) async {
+    final allProviders =
+        await FirebaseFirestore.instance.collection('providers').get();
+
+    final convertedProviders =
+        allProviders.docs.map((e) => ProviderModel.fromJson(e)).toList();
+
+    final providersMatchingCriteria = convertedProviders
+        .where((element) =>
+            element.name!.toLowerCase().contains(searchTerm.toLowerCase()) ||
+            element.address!.toLowerCase().contains(searchTerm.toLowerCase()) ||
+            element.products!.any((element) =>
+                element.name!.toLowerCase().contains(searchTerm.toLowerCase())))
+        .toList();
+
+    return providersMatchingCriteria;
+  }
 }

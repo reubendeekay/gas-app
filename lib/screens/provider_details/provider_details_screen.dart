@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gas/constants.dart';
-import 'package:gas/helpers/lists.dart';
-
+import 'package:carousel_slider/carousel_slider.dart';
+import 'package:gas/helpers/cached_image.dart';
 import 'package:gas/models/provider_model.dart';
 import 'package:gas/screens/provider_details/product_category_widget.dart';
 import 'package:gas/screens/provider_details/product_select_dialog.dart';
@@ -58,18 +58,23 @@ class _ProviderDetailsScreenState extends State<ProviderDetailsScreen> {
                     title: Text(widget.provider.name!,
                         style:
                             const TextStyle(color: Colors.white, fontSize: 16)),
-                    background: SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Row(
-                        children: List.generate(
+                    background: CarouselSlider(
+                      options: CarouselOptions(
+                          autoPlayAnimationDuration: const Duration(seconds: 2),
+                          autoPlayInterval: const Duration(seconds: 10),
+                          height: size.height * 0.5,
+                          autoPlay: true,
+                          viewportFraction: 1),
+                      items: List.generate(
                           widget.provider.images!.length,
-                          (index) => Image.network(
-                              widget.provider.images![index],
-                              width: size.width,
-                              height: size.height * .4,
-                              fit: BoxFit.cover),
-                        ),
-                      ),
+                          (index) => Builder(
+                                builder: (BuildContext context) {
+                                  return cachedImage(
+                                    widget.provider.images![index],
+                                    fit: BoxFit.cover,
+                                  );
+                                },
+                              )),
                     ),
                   ),
                 ),

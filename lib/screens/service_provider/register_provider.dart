@@ -54,7 +54,7 @@ class _RegisterProviderState extends State<RegisterProvider> {
                       height: 8,
                     ),
                     MyTextField(
-                        title: 'Name',
+                        labelText: 'Name',
                         onChanged: (val) {
                           setState(() {
                             name = val;
@@ -64,7 +64,7 @@ class _RegisterProviderState extends State<RegisterProvider> {
                       height: 15,
                     ),
                     MyTextField(
-                        title: 'Address',
+                        labelText: 'Address',
                         onChanged: (val) {
                           setState(() {
                             address = val;
@@ -73,7 +73,7 @@ class _RegisterProviderState extends State<RegisterProvider> {
                     const SizedBox(
                       height: 15,
                     ),
-                    const MyTextField(title: 'Owmner Name'),
+                    const MyTextField(labelText: 'Owmner Name'),
                     const SizedBox(
                       height: 15,
                     ),
@@ -84,7 +84,7 @@ class _RegisterProviderState extends State<RegisterProvider> {
                     const SizedBox(
                       height: 8,
                     ),
-                    const MyTextField(title: 'Website'),
+                    const MyTextField(labelText: 'Website'),
                     const SizedBox(
                       height: 15,
                     ),
