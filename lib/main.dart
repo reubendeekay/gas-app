@@ -39,7 +39,21 @@ class MyApp extends StatelessWidget {
           title: 'Flutter Demo',
           debugShowCheckedModeBanner: false,
           theme: ThemeData(
-              primaryColor: kIconColor,
+              primarySwatch: MaterialColor(
+                0xff47904C,
+                <int, Color>{
+                  50: kIconColor.withOpacity(0.1),
+                  100: kIconColor.withOpacity(0.2),
+                  200: kIconColor.withOpacity(0.3),
+                  300: kIconColor.withOpacity(0.4),
+                  400: kIconColor.withOpacity(0.5),
+                  500: kIconColor.withOpacity(0.6),
+                  600: kIconColor.withOpacity(0.7),
+                  700: kIconColor.withOpacity(0.8),
+                  800: kIconColor.withOpacity(0.9),
+                  900: kIconColor,
+                },
+              ),
               appBarTheme: AppBarTheme(
                 iconTheme: const IconThemeData(
                   color: Colors.black,

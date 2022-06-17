@@ -1,9 +1,43 @@
 import 'package:flutter/material.dart';
 import 'package:gas/constants.dart';
 import 'package:gas/helpers/ratings_stars.dart';
+import 'package:gas/models/request_model.dart';
 
-class DriverArrivedDialog extends StatelessWidget {
-  const DriverArrivedDialog({Key? key}) : super(key: key);
+class DriverArrivedDialog extends StatefulWidget {
+  const DriverArrivedDialog({Key? key, required this.request})
+      : super(key: key);
+  final RequestModel request;
+
+  @override
+  State<DriverArrivedDialog> createState() => _DriverArrivedDialogState();
+}
+
+class _DriverArrivedDialogState extends State<DriverArrivedDialog> {
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    Future.delayed(Duration.zero, () {
+      showDialog(
+          context: context,
+          builder: (ctx) => Dialog(
+                child: DriverArrivedWidget(
+                  request: widget.request,
+                ),
+              ));
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container();
+  }
+}
+
+class DriverArrivedWidget extends StatelessWidget {
+  const DriverArrivedWidget({Key? key, required this.request})
+      : super(key: key);
+  final RequestModel request;
 
   @override
   Widget build(BuildContext context) {
@@ -15,8 +49,11 @@ class DriverArrivedDialog extends StatelessWidget {
           children: [
             Row(
               children: [
-                const CircleAvatar(
+                CircleAvatar(
                   radius: 24,
+                  backgroundImage: NetworkImage(
+                    request.driver!.profilePic!,
+                  ),
                 ),
                 const SizedBox(
                   width: 20,
@@ -24,9 +61,9 @@ class DriverArrivedDialog extends StatelessWidget {
                 Expanded(
                     child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: const [
+                  children: [
                     Text(
-                      'Delivery Driver ',
+                      request.driver!.fullName!,
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,

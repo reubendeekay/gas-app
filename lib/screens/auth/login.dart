@@ -234,7 +234,7 @@ class _LoginPageState extends State<LoginPage> {
                 child: MaterialButton(
                   onPressed: () async {
                     try {
-                      Provider.of<AuthProvider>(context, listen: false)
+                      await Provider.of<AuthProvider>(context, listen: false)
                           .login(email!, password!);
                       Get.off(() => const InitialLoadingScreen());
                     } catch (e) {

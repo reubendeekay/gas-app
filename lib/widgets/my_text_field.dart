@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gas/constants.dart';
 
 class MyTextField extends StatelessWidget {
   const MyTextField(
@@ -6,6 +7,7 @@ class MyTextField extends StatelessWidget {
       this.onChanged,
       this.labelText,
       this.prefixIcon,
+      this.textInputAction,
       this.hintText})
       : super(key: key);
 
@@ -13,6 +15,7 @@ class MyTextField extends StatelessWidget {
   final String? hintText;
   final Function(String val)? onChanged;
   final IconData? prefixIcon;
+  final TextInputAction? textInputAction;
 
   @override
   Widget build(BuildContext context) {
@@ -22,6 +25,8 @@ class MyTextField extends StatelessWidget {
           onChanged!(val);
         }
       },
+      cursorColor: kPrimaryColor,
+      textInputAction: textInputAction,
       textAlignVertical: TextAlignVertical.center,
       decoration: InputDecoration(
         contentPadding: const EdgeInsets.symmetric(horizontal: 20),
@@ -30,6 +35,10 @@ class MyTextField extends StatelessWidget {
         hintText: hintText,
         hintStyle: const TextStyle(color: Colors.grey, fontSize: 14),
         border: InputBorder.none,
+        floatingLabelStyle: const TextStyle(
+          color: Colors.black,
+          fontSize: 18.0,
+        ),
         prefixIcon: prefixIcon != null
             ? Icon(
                 prefixIcon,

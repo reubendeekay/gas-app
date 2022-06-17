@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_phone_direct_caller/flutter_phone_direct_caller.dart';
 import 'package:gas/constants.dart';
 import 'package:gas/helpers/ratings_stars.dart';
 import 'package:gas/models/user_model.dart';
@@ -96,14 +97,20 @@ class _DriverFoundState extends State<DriverFound> {
                 const SizedBox(
                   width: 20,
                 ),
-                Container(
-                  padding: const EdgeInsets.all(10),
-                  decoration: const BoxDecoration(
-                      color: kIconColor, shape: BoxShape.circle),
-                  child: const Icon(
-                    Icons.call_outlined,
-                    color: Colors.white,
-                    size: 26,
+                InkWell(
+                  onTap: () async {
+                    await FlutterPhoneDirectCaller.callNumber(
+                        widget.driver.phone!);
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.all(10),
+                    decoration: const BoxDecoration(
+                        color: kIconColor, shape: BoxShape.circle),
+                    child: const Icon(
+                      Icons.call_outlined,
+                      color: Colors.white,
+                      size: 26,
+                    ),
                   ),
                 )
               ],

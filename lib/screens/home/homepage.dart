@@ -56,11 +56,14 @@ class _HomepageState extends State<Homepage> {
             );
           },
           //circle to show the mechanic profile in map
-          icon: await MarkerIcon.downloadResizePictureCircle(provider.logo!,
-              size: (100).toInt(),
-              borderSize: 10,
-              addBorder: true,
-              borderColor: kPrimaryColor),
+          icon: await MarkerIcon.downloadResizePicture(
+            url: provider.logo!,
+
+            imageSize: (140).toInt(),
+            // borderSize: 10,
+            // addBorder: true,
+            // borderColor: kPrimaryColor
+          ),
           position:
               LatLng(provider.location!.latitude, provider.location!.longitude),
         ),

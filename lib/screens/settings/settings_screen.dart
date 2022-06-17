@@ -1,9 +1,11 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:gas/constants.dart';
+import 'package:gas/screens/auth/login.dart';
 import 'package:gas/screens/settings/app_settings_widget.dart';
 import 'package:gas/screens/settings/settings_profile_widget.dart';
 import 'package:gas/screens/settings/user_options_widget.dart';
+import 'package:get/route_manager.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({Key? key}) : super(key: key);
@@ -30,6 +32,7 @@ class SettingsScreen extends StatelessWidget {
             RaisedButton(
                 onPressed: () async {
                   await FirebaseAuth.instance.signOut();
+                  Get.offAll(() => const LoginPage());
                 },
                 color: kIconColor,
                 textColor: Colors.white,

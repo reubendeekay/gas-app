@@ -1,18 +1,16 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:gas/constants.dart';
 import 'package:gas/helpers/distance_helper.dart';
 import 'package:gas/helpers/lists.dart';
 import 'package:gas/models/request_model.dart';
 import 'package:gas/providers/auth_provider.dart';
-import 'package:gas/providers/location_provider.dart';
-import 'package:gas/providers/request_provider.dart';
 import 'package:gas/screens/trail/widgets/delivery_stepper_indicator.dart';
+import 'package:gas/screens/trail/widgets/driver_arrived_dialog.dart';
 import 'package:gas/screens/trail/widgets/driver_found_dialog.dart';
 import 'package:gas/screens/trail/widgets/trail_delivery_sheet.dart';
 import 'package:gas/widgets/loading_effect.dart';
-import 'package:get/get_navigation/src/snackbar/snackbar.dart';
+import 'package:google_map_polyline_new/google_map_polyline_new.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:marker_icon/marker_icon.dart';
 import 'package:provider/provider.dart';
@@ -29,6 +27,39 @@ class TrailScreen extends StatefulWidget {
 class _TrailScreenState extends State<TrailScreen> {
   GoogleMapController? _controller;
   Set<Marker> _markers = <Marker>{};
+  Map<PolylineId, Polyline> _polylines = <PolylineId, Polyline>{};
+//Polyline patterns
+  List<List<PatternItem>> patterns = <List<PatternItem>>[
+    <PatternItem>[], //line
+    <PatternItem>[PatternItem.dash(30.0), PatternItem.gap(20.0)], //dash
+    <PatternItem>[PatternItem.dot, PatternItem.gap(10.0)], //dot
+    <PatternItem>[
+      //dash-dot
+      PatternItem.dash(30.0),
+      PatternItem.gap(20.0),
+      PatternItem.dot,
+      PatternItem.gap(20.0)
+    ],
+  ];
+
+  _addPolyline(List<LatLng> _coordinates) {
+    PolylineId id = const PolylineId("1");
+    Polyline polyline = Polyline(
+        polylineId: id,
+        patterns: patterns[0],
+        color: Colors.blueAccent,
+        points: _coordinates,
+        width: 10,
+        onTap: () {});
+
+    setState(() {
+      _polylines[id] = polyline;
+    });
+  }
+
+//google cloud api key
+  GoogleMapPolyline googleMapPolyline =
+      GoogleMapPolyline(apiKey: "AIzaSyDxbfpRGmq3Wjex1SfTXwySuxQaCiQZxUM");
 
   void _onMapCreated(GoogleMapController controller) async {
     _controller = controller;
@@ -45,21 +76,45 @@ class _TrailScreenState extends State<TrailScreen> {
 
     final request = RequestModel.fromJson(requestData);
 
-    _markers.add(
+    _markers.addAll([
       Marker(
-        markerId: const MarkerId('1'),
+        markerId: const MarkerId('user'),
         onTap: () {},
         //circle to show the mechanic profile in map
-        icon: await MarkerIcon.downloadResizePictureCircle(
-            request.user!.profilePic!,
-            size: (100).toInt(),
-            borderSize: 10,
-            addBorder: true,
-            borderColor: kPrimaryColor),
+        icon: await MarkerIcon.downloadResizePicture(
+          url: request.user!.profilePic!,
+          imageSize: (100).toInt(),
+          // borderSize: 10,
+          // addBorder: true,
+          // borderColor: kPrimaryColor
+        ),
         position: LatLng(
             request.userLocation!.latitude, request.userLocation!.longitude),
       ),
-    );
+      if (request.driver != null)
+        Marker(
+          markerId: const MarkerId('driver'),
+          onTap: () {},
+          //circle to show the mechanic profile in map
+          icon: await MarkerIcon.downloadResizePicture(
+            url:
+                'https://i.pinimg.com/originals/79/64/83/796483ae19e58f77dafca3e5d4f3e06e.png',
+            imageSize: (110).toInt(),
+            // borderSize: 10,
+            // addBorder: true,
+            // borderColor: kPrimaryColor
+          ),
+          position: LatLng(request.driverLocation!.latitude,
+              request.driverLocation!.longitude),
+        ),
+    ]);
+    var coordinates = await googleMapPolyline.getCoordinatesWithLocation(
+        origin: LatLng(request.driverLocation!.latitude,
+            request.driverLocation!.longitude),
+        destination: LatLng(
+            request.userLocation!.latitude, request.userLocation!.longitude),
+        mode: RouteMode.driving);
+    _addPolyline(coordinates!);
 
     setState(() {});
   }
@@ -77,6 +132,8 @@ class _TrailScreenState extends State<TrailScreen> {
     } else if (status == 'On Transit'.toLowerCase()) {
       return 3;
     } else if (status == 'Delivered'.toLowerCase()) {
+      return 4;
+    } else if (status == 'Arrived'.toLowerCase()) {
       return 4;
     } else {
       return 0;
@@ -112,16 +169,16 @@ class _TrailScreenState extends State<TrailScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Row(
-                                children: [
-                                  InkWell(
-                                    child: const Icon(
-                                      Icons.arrow_back_ios,
-                                      size: 18,
-                                    ),
-                                    onTap: () => Navigator.pop(context),
-                                  ),
-                                  const Spacer(),
-                                  const Text(
+                                children: const [
+                                  // InkWell(
+                                  //   child: const Icon(
+                                  //     Icons.arrow_back_ios,
+                                  //     size: 18,
+                                  //   ),
+                                  //   onTap: () => Navigator.pop(context),
+                                  // ),
+                                  Spacer(),
+                                  Text(
                                     'Help',
                                   ),
                                 ],
@@ -201,6 +258,8 @@ class _TrailScreenState extends State<TrailScreen> {
                   ),
                   if (deliveryIndex(data.status) == 2)
                     DriverFoundeDialog(driver: data.driver!),
+                  if (data.status == 'Arrived'.toLowerCase())
+                    DriverArrivedDialog(request: data),
                 ],
               );
             }),

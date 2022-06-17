@@ -19,9 +19,12 @@ class UserOptionsWidget extends StatelessWidget {
         decoration: BoxDecoration(
             color: Colors.grey[300], borderRadius: BorderRadius.circular(10)),
         child: Column(children: [
-          settingsOption(onTap: () {
-            Get.to(() => ChatRoom(user!));
-          }),
+          settingsOption(
+              title: 'Become a Service Provider',
+              icon: Iconsax.profile_add,
+              onTap: () {
+                Get.to(() => const RegisterProvider());
+              }),
           settingsOption(
               title: 'Purchase History',
               icon: Iconsax.shopping_cart,

@@ -34,7 +34,7 @@ class ProductCategoryWidget extends StatelessWidget {
               ),
               child: Center(
                   child: Icon(
-                Icons.local_gas_station_outlined,
+                Icons.water_drop_outlined,
                 color: color ?? kIconColor,
                 size: 30,
               )),

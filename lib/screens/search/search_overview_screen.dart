@@ -29,6 +29,7 @@ class _SearchOverviewScreenState extends State<SearchOverviewScreen> {
             padding: const EdgeInsets.fromLTRB(15, 10, 15, 2),
             child: MyTextField(
               hintText: 'Search',
+              textInputAction: TextInputAction.search,
               onChanged: (val) {
                 setState(() {
                   searchTerm = val;

@@ -126,15 +126,15 @@ class _ProviderDetailsScreenState extends State<ProviderDetailsScreen> {
                       width: 10,
                     ),
                     ProductCategoryWidget(
-                      category: 'Petrol',
+                      category: 'Cooking',
                       color: majorColor,
                     ),
                     ProductCategoryWidget(
-                      category: 'Diesel',
+                      category: 'Coconut',
                       color: majorColor,
                     ),
                     ProductCategoryWidget(
-                      category: 'Gas',
+                      category: 'Other',
                       color: majorColor,
                     ),
                   ],

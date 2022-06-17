@@ -235,6 +235,12 @@ class _RegisterProviderState extends State<RegisterProvider> {
                   try {
                     await Provider.of<GasProviders>(context, listen: false)
                         .registerProvider(provider, images, logo!);
+                    // ignore: use_build_context_synchronously
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Registering.Please wait...'),
+                      ),
+                    );
                     Navigator.of(context).pop();
                   } catch (e) {
                     ScaffoldMessenger.of(context).showSnackBar(

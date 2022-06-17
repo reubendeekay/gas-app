@@ -1,13 +1,16 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_phone_direct_caller/flutter_phone_direct_caller.dart';
 import 'package:gas/models/request_model.dart';
 import 'package:gas/models/user_model.dart';
 import 'package:gas/providers/auth_provider.dart';
 import 'package:gas/providers/location_provider.dart';
 import 'package:gas/providers/request_provider.dart';
+import 'package:gas/screens/chat/chatroom.dart';
 import 'package:gas/screens/trail/widgets/delivery_driver_processing.dart';
 import 'package:gas/screens/trail/widgets/trail_delivery_details_widget.dart';
 import 'package:gas/screens/trail/widgets/trail_order_summary_widget.dart';
+import 'package:get/route_manager.dart';
 import 'package:provider/provider.dart';
 
 class TrailDeliverySheet extends StatelessWidget {
@@ -134,11 +137,16 @@ class DeliveryDriverWidget extends StatelessWidget {
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                    shape: BoxShape.circle, color: Colors.grey[200]),
-                child: const Icon(Icons.call),
+              InkWell(
+                onTap: () async {
+                  await FlutterPhoneDirectCaller.callNumber(driver.phone!);
+                },
+                child: Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                      shape: BoxShape.circle, color: Colors.grey[200]),
+                  child: const Icon(Icons.call),
+                ),
               ),
               const SizedBox(
                 width: 15,
@@ -148,7 +156,10 @@ class DeliveryDriverWidget extends StatelessWidget {
                   height: 40,
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(20),
-                    child: TextField(
+                    child: TextFormField(
+                        onEditingComplete: () {
+                          Get.to(() => ChatRoom(driver));
+                        },
                         textAlignVertical: TextAlignVertical.center,
                         decoration: InputDecoration(
                             contentPadding: const EdgeInsets.symmetric(
