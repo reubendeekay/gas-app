@@ -39,7 +39,7 @@ class GasProviders extends ChangeNotifier {
 
     await FirebaseFirestore.instance
         .collection('providers')
-        .doc(id)
+        .doc(provider.ownerId!)
         .set(provider.toJson());
 
     for (ProductModel product in provider.products!) {

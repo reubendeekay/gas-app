@@ -1,9 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/widgets.dart';
 import 'package:gas/models/request_model.dart';
 import 'package:gas/models/user_model.dart';
+import 'package:gas/providers/auth_provider.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:provider/provider.dart';
 
 class RequestProvider with ChangeNotifier {
   Future<void> sendPurchaseRequest(RequestModel request) async {
@@ -79,5 +82,34 @@ class RequestProvider with ChangeNotifier {
           driverInitialLocation.latitude, driverInitialLocation.longitude),
       'status': 'driver found',
     });
+    notifyListeners();
+  }
+
+  Future<void> sendRating(
+      RequestModel request, int rating, BuildContext context) async {
+    final uid = FirebaseAuth.instance.currentUser!.uid;
+    await FirebaseFirestore.instance
+        .collection('providers')
+        .doc(request.products!.first.ownerId!)
+        .update({
+      'ratings': FieldValue.increment(rating),
+      'ratingCount': FieldValue.increment(1),
+    });
+    Provider.of<AuthProvider>(context, listen: false).setTransitId(null);
+
+    await FirebaseFirestore.instance.collection('users').doc(uid).update({
+      'transitId': null,
+    });
+
+    await FirebaseFirestore.instance
+        .collection('requests')
+        .doc('users')
+        .collection(uid)
+        .doc(request.id!)
+        .update({
+      'status': 'done',
+    });
+
+    notifyListeners();
   }
 }

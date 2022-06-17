@@ -156,7 +156,8 @@ class ProviderInfoCard extends StatelessWidget {
                         width: 5,
                       ),
                       Text(
-                        provider.ratings!.toStringAsFixed(1),
+                        (provider.ratings! / provider.ratingCount!)
+                            .toStringAsFixed(1),
                         style: const TextStyle(
                             fontSize: 16, fontWeight: FontWeight.bold),
                       )

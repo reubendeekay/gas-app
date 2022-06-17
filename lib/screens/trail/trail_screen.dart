@@ -5,6 +5,7 @@ import 'package:gas/helpers/distance_helper.dart';
 import 'package:gas/helpers/lists.dart';
 import 'package:gas/models/request_model.dart';
 import 'package:gas/providers/auth_provider.dart';
+import 'package:gas/screens/trail/rating_screen.dart';
 import 'package:gas/screens/trail/widgets/delivery_stepper_indicator.dart';
 import 'package:gas/screens/trail/widgets/driver_arrived_dialog.dart';
 import 'package:gas/screens/trail/widgets/driver_found_dialog.dart';
@@ -131,7 +132,8 @@ class _TrailScreenState extends State<TrailScreen> {
       return 2;
     } else if (status == 'On Transit'.toLowerCase()) {
       return 3;
-    } else if (status == 'Delivered'.toLowerCase()) {
+    } else if (status == 'Delivered'.toLowerCase() ||
+        status == 'Completed'.toLowerCase()) {
       return 4;
     } else if (status == 'Arrived'.toLowerCase()) {
       return 4;
@@ -149,7 +151,7 @@ class _TrailScreenState extends State<TrailScreen> {
                 .collection('requests')
                 .doc('users')
                 .collection(uid)
-                .where('status', isNotEqualTo: 'completed')
+                .where('status', isNotEqualTo: 'done')
                 .snapshots(),
             builder: (context, snapshot) {
               if (!snapshot.hasData) {
@@ -260,6 +262,9 @@ class _TrailScreenState extends State<TrailScreen> {
                     DriverFoundeDialog(driver: data.driver!),
                   if (data.status == 'Arrived'.toLowerCase())
                     DriverArrivedDialog(request: data),
+                  if (data.status.toLowerCase() == 'delivered' ||
+                      data.status.toLowerCase() == 'completed')
+                    RatingScreen(request: data)
                 ],
               );
             }),

@@ -8,7 +8,7 @@ class ProviderModel {
   final String? ownerId;
   List<dynamic>? images;
   String? logo;
-  final double? ratings;
+  final int? ratings;
   final int? ratingCount;
   final GeoPoint? location;
   List<ProductModel>? products;
@@ -46,7 +46,7 @@ class ProviderModel {
       address: json['address'] as String,
       images: json['imageUrl'] as List<dynamic>,
       logo: json['logo'] as String,
-      ratings: json['ratings'] as double,
+      ratings: json['ratings'] as int,
       ratingCount: json['ratingCount'] as int,
       location: json['location'] as GeoPoint,
       id: json['id'] as String,

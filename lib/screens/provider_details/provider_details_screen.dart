@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gas/constants.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:gas/helpers/cached_image.dart';
+import 'package:gas/helpers/ratings_stars.dart';
 import 'package:gas/models/provider_model.dart';
 import 'package:gas/screens/provider_details/product_category_widget.dart';
 import 'package:gas/screens/provider_details/product_select_dialog.dart';
@@ -83,9 +84,6 @@ class _ProviderDetailsScreenState extends State<ProviderDetailsScreen> {
             body: ListView(
               padding: EdgeInsets.zero,
               children: [
-                const SizedBox(
-                  height: 15,
-                ),
                 Container(
                   padding:
                       const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
@@ -99,6 +97,13 @@ class _ProviderDetailsScreenState extends State<ProviderDetailsScreen> {
                       ),
                       const SizedBox(
                         height: 5,
+                      ),
+                      Ratings(
+                          rating: (widget.provider.ratings! /
+                                  widget.provider.ratingCount!)
+                              .toDouble()),
+                      const SizedBox(
+                        height: 3,
                       ),
                       Text(
                         widget.provider.address!,

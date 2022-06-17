@@ -228,7 +228,7 @@ class _RegisterProviderState extends State<RegisterProvider> {
                     ),
                     products: _products,
                     ratingCount: 0,
-                    ratings: 5.0,
+                    ratings: 0,
                     ownerId: FirebaseAuth.instance.currentUser!.uid,
                   );
 

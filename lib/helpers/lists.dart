@@ -1,36 +1,4 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:gas/models/product_model.dart';
-import 'package:gas/models/provider_model.dart';
-
-List<ProviderModel> allProviders = [
-  ProviderModel(
-    name: 'Shell Gas Station',
-    address: 'Jogoo road,Nairobi',
-    images: [
-      'https://gunnebocdnprod01.azureedge.net/medialibrary/Sites/business-units/cashmanagement/Images/Customer%20cases/SafePay-Closed-Cash-Management-Shell-1.jpg'
-    ],
-    logo: 'http://assets.stickpng.com/images/5954bb45deaf2c03413be353.png',
-    ratings: 4.5,
-    ratingCount: 100,
-    location: const GeoPoint(-1.2970, 36.8620),
-    id: '1',
-    products: allProducts,
-    ownerId: '1',
-  ),
-  ProviderModel(
-    name: 'Rubis',
-    address: 'Kenyatta Avenue, Nairobi',
-    images: ['https://whownskenya.com/wp-content/uploads/2022/01/rubis.jpg'],
-    logo:
-        'https://play-lh.googleusercontent.com/TjUtO2LFR9GbuNSEGe4qte3zt3dMphiqjFAtHk7AuTPLsGW57tzIAXgHe7VlhRqV1JI=w600-h300-pc0xffffff-pd',
-    ratings: 4.5,
-    ratingCount: 100,
-    location: const GeoPoint(-1.2977, 36.8641),
-    id: '2',
-    products: allProducts,
-    ownerId: '2',
-  ),
-];
 
 List<ProductModel> allProducts = [
   ProductModel(
