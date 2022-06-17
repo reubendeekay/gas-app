@@ -80,14 +80,14 @@ class _PaymentWidgetState extends State<PaymentWidget> {
             },
             onFinish: () async {
               final request = RequestModel(
-                driverLocation: GeoPoint(loc!.latitude!, loc.longitude!),
-                id: '1',
-                products: widget.request.products,
-                user: widget.request.user,
-                userLocation: widget.request.userLocation,
-                paymentMethod: widget.request.paymentMethod,
-                total: widget.request.total,
-              );
+                  driverLocation: GeoPoint(loc!.latitude!, loc.longitude!),
+                  products: widget.request.products,
+                  user: widget.request.user,
+                  userLocation: widget.request.userLocation,
+                  paymentMethod: widget.request.paymentMethod,
+                  total: widget.request.total,
+                  createdAt: Timestamp.now(),
+                  status: 'pending');
               await Provider.of<RequestProvider>(context, listen: false)
                   .sendPurchaseRequest(request);
               await Navigator.push(

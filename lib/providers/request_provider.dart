@@ -35,7 +35,7 @@ class RequestProvider with ChangeNotifier {
 
     //SET REQUEST ID TO USER
     await FirebaseFirestore.instance.collection('users').doc(uid).update({
-      'requestId': id,
+      'transitId': id,
     });
 
     notifyListeners();

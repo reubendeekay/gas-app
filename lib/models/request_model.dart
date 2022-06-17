@@ -38,6 +38,7 @@ class RequestModel {
       'id': id,
       'total': total,
       'status': status,
+      'createdAt': createdAt,
     };
   }
 
@@ -57,6 +58,7 @@ class RequestModel {
       id: json['id'] as String,
       total: json['total'] as double,
       status: json['status'] as String,
+      createdAt: json['createdAt'] as Timestamp,
     );
   }
 }
