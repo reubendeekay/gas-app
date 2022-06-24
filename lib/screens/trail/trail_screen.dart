@@ -157,6 +157,7 @@ class _TrailScreenState extends State<TrailScreen> {
               if (!snapshot.hasData) {
                 return LoadingEffect.getSearchLoadingScreen(context);
               }
+
               final data = RequestModel.fromJson(snapshot.data!.docs.first);
               return Stack(
                 children: [

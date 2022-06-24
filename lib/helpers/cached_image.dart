@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:gas/helpers/button_loader.dart';
 import 'package:gas/helpers/my_shimmer.dart';
 
 Widget cachedImage(
@@ -17,12 +18,8 @@ Widget cachedImage(
         height: height,
         width: width,
         // color: Colors.grey,
-        child: const MyShimmer(
-          child: Icon(
-            Icons.handyman,
-            color: Colors.grey,
-          ),
-        )),
+        child: MyShimmer(
+            child: Transform.scale(scale: 2, child: const MyLoader()))),
     errorWidget: (context, url, error) => const Icon(Icons.error),
   );
 }

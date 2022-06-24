@@ -52,7 +52,7 @@ class DriverArrivedWidget extends StatelessWidget {
                 CircleAvatar(
                   radius: 24,
                   backgroundImage: NetworkImage(
-                    request.driver!.profilePic!,
+                    request.driver!.user!.profilePic!,
                   ),
                 ),
                 const SizedBox(
@@ -63,21 +63,21 @@ class DriverArrivedWidget extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      request.driver!.fullName!,
-                      style: TextStyle(
+                      request.driver!.user!.fullName!,
+                      style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
-                    Ratings(
+                    const Ratings(
                       rating: 4.5,
                       size: 14,
                       gesturesDisabled: true,
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 3,
                     ),
-                    Text('KMFF 730P ',
+                    const Text('KMFF 730P ',
                         style: TextStyle(color: Colors.grey, fontSize: 12)),
                   ],
                 )),

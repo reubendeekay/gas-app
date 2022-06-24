@@ -3,11 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_phone_direct_caller/flutter_phone_direct_caller.dart';
 import 'package:gas/constants.dart';
 import 'package:gas/helpers/ratings_stars.dart';
+import 'package:gas/models/driver_model.dart';
 import 'package:gas/models/user_model.dart';
 
 class DriverFoundeDialog extends StatefulWidget {
   const DriverFoundeDialog({Key? key, required this.driver}) : super(key: key);
-  final UserModel driver;
+  final DriverModel driver;
 
   @override
   State<DriverFoundeDialog> createState() => _DriverFoundeDialogState();
@@ -37,7 +38,7 @@ class _DriverFoundeDialogState extends State<DriverFoundeDialog> {
 
 class DriverFound extends StatefulWidget {
   const DriverFound({Key? key, required this.driver}) : super(key: key);
-  final UserModel driver;
+  final DriverModel driver;
 
   @override
   State<DriverFound> createState() => _DriverFoundState();
@@ -65,7 +66,7 @@ class _DriverFoundState extends State<DriverFound> {
                 CircleAvatar(
                   radius: 24,
                   backgroundImage: CachedNetworkImageProvider(
-                    widget.driver.profilePic!,
+                    widget.driver.user!.profilePic!,
                   ),
                 ),
                 const SizedBox(
@@ -76,7 +77,7 @@ class _DriverFoundState extends State<DriverFound> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      widget.driver.fullName!,
+                      widget.driver.user!.fullName!,
                       style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
@@ -100,7 +101,7 @@ class _DriverFoundState extends State<DriverFound> {
                 InkWell(
                   onTap: () async {
                     await FlutterPhoneDirectCaller.callNumber(
-                        widget.driver.phone!);
+                        widget.driver.user!.phone!);
                   },
                   child: Container(
                     padding: const EdgeInsets.all(10),

@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
 import 'package:gas/models/user_model.dart';
 import 'package:gas/providers/location_provider.dart';
@@ -99,12 +102,39 @@ class AuthProvider with ChangeNotifier {
     );
   }
 
+  Future<void> updateProfile(UserModel userData) async {
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(userData.userId)
+        .update(userData.toJson());
+    notifyListeners();
+  }
+
+  Future<void> updateProfilePic(File profile) async {
+    final uid = FirebaseAuth.instance.currentUser!.uid;
+    final upload = await FirebaseStorage.instance
+        .ref('profile_pics/$uid')
+        .putFile(profile);
+    final url = await upload.ref.getDownloadURL();
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(uid)
+        .update({'profilePic': url});
+    setProfilePic(url);
+    notifyListeners();
+  }
+
   void setTransitId(String? id) {
     if (id == null) {
       _user!.transitId = null;
     } else {
       _user!.transitId = id;
     }
+    notifyListeners();
+  }
+
+  void setProfilePic(String url) {
+    _user!.profilePic = url;
     notifyListeners();
   }
 }

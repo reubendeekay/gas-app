@@ -1,10 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:gas/models/driver_model.dart';
 import 'package:gas/models/product_model.dart';
 import 'package:gas/models/user_model.dart';
 
 class RequestModel {
   String? id;
-  final UserModel? driver;
+  final DriverModel? driver;
   GeoPoint? driverLocation;
   GeoPoint? userLocation;
   final UserModel? user;
@@ -45,7 +46,7 @@ class RequestModel {
   factory RequestModel.fromJson(dynamic json) {
     return RequestModel(
       driver:
-          json['driver'] != null ? UserModel.fromJson(json['driver']) : null,
+          json['driver'] != null ? DriverModel.fromJson(json['driver']) : null,
       user: json['user'] != null ? UserModel.fromJson(json['user']) : null,
       products: json['products'] != null
           ? json['products']

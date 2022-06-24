@@ -21,7 +21,10 @@ class ProductCategoryWidget extends StatelessWidget {
             const SizedBox(
               height: 10,
             ),
-            Text(category ?? 'Gas'),
+            Text(
+              category ?? 'Gas',
+              style: const TextStyle(color: Colors.white),
+            ),
             const SizedBox(
               height: 5,
             ),

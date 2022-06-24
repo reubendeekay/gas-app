@@ -3,17 +3,22 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:gas/constants.dart';
+import 'package:gas/models/driver_model.dart';
 import 'package:gas/models/message_model.dart';
 import 'package:gas/models/user_model.dart';
+import 'package:gas/providers/chat_provider.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:intl/intl.dart';
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class ChatRoom extends StatefulWidget {
-  final UserModel driver;
+  final DriverModel driver;
+  final String chatRoomId;
 
-  const ChatRoom(this.driver, {Key? key}) : super(key: key);
+  const ChatRoom(this.driver, {Key? key, required this.chatRoomId})
+      : super(key: key);
 
   @override
   _ChatRoomState createState() => _ChatRoomState();
@@ -23,83 +28,110 @@ class _ChatRoomState extends State<ChatRoom> {
   TextEditingController messageController = TextEditingController();
   final uid = FirebaseAuth.instance.currentUser!.uid;
 
-  @override
   Widget _buildReceiveMessage(MessageModel message) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Align(
-            alignment: Alignment.centerLeft,
-            child: Container(
-              margin: const EdgeInsets.only(right: 140),
-              decoration: const BoxDecoration(
-                borderRadius: BorderRadius.only(
-                    topRight: Radius.circular(12),
-                    bottomRight: Radius.circular(12),
-                    bottomLeft: Radius.circular(12)),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    message.message!,
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Align(
+                alignment: Alignment.centerLeft,
+                child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: const BorderRadius.only(
+                        topRight: Radius.circular(12),
+                        bottomRight: Radius.circular(12),
+                        bottomLeft: Radius.circular(12)),
+                    color: kIconColor.withOpacity(0.3),
                   ),
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: Text(
-                      DateFormat('HH:mm ').format(message.sentAt!.toDate()),
-                      style: const TextStyle(fontSize: 11),
-                    ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Row(
+                        children: [
+                          Text(
+                            message.message!,
+                            style: const TextStyle(color: Colors.white),
+                          ),
+                          SizedBox(
+                            width: message.message!.length < 15 ? 15 : 3,
+                          )
+                        ],
+                      ),
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: Text(
+                          DateFormat('HH:mm ').format(message.sentAt!.toDate()),
+                          style: const TextStyle(
+                              fontSize: 10, color: Colors.white),
+                        ),
+                      ),
+                    ],
                   ),
-                ],
+                ),
               ),
-            ),
+            ],
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
   Widget _buildSendMessage(MessageModel message) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Align(
-            alignment: Alignment.centerRight,
-            child: Container(
-              color: kPrimaryColor,
-              margin: const EdgeInsets.only(left: 140),
-              decoration: const BoxDecoration(
-                borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(12),
-                    bottomLeft: Radius.circular(12),
-                    bottomRight: Radius.circular(12)),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    message.message!,
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Align(
+                alignment: Alignment.centerRight,
+                child: Container(
+                  padding: const EdgeInsets.all(5),
+                  decoration: const BoxDecoration(
+                    color: kPrimaryColor,
+                    borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(12),
+                        bottomLeft: Radius.circular(12),
+                        bottomRight: Radius.circular(12)),
                   ),
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: Text(
-                      DateFormat('HH:mm ').format(message.sentAt!.toDate()),
-                      style: const TextStyle(fontSize: 11),
-                    ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Row(
+                        children: [
+                          Text(
+                            message.message!,
+                            style: const TextStyle(color: Colors.white),
+                          ),
+                          SizedBox(
+                            width: message.message!.length < 15 ? 15 : 3,
+                          )
+                        ],
+                      ),
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: Text(
+                          DateFormat('HH:mm ').format(message.sentAt!.toDate()),
+                          style: const TextStyle(
+                              fontSize: 10, color: Colors.white),
+                        ),
+                      ),
+                    ],
                   ),
-                ],
+                ),
               ),
-            ),
+            ],
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
@@ -126,8 +158,8 @@ class _ChatRoomState extends State<ChatRoom> {
                   ),
                   const SizedBox(width: 8),
                   CircleAvatar(
-                    backgroundImage:
-                        CachedNetworkImageProvider(widget.driver.profilePic!),
+                    backgroundImage: CachedNetworkImageProvider(
+                        widget.driver.user!.profilePic!),
                   ),
                   const SizedBox(width: 12),
                   Expanded(
@@ -135,12 +167,12 @@ class _ChatRoomState extends State<ChatRoom> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          widget.driver.fullName!,
+                          widget.driver.user!.fullName!,
                           style: const TextStyle(fontWeight: FontWeight.w600),
                         ),
                         const SizedBox(height: 2),
                         Text(
-                          widget.driver.phone!,
+                          widget.driver.user!.phone!,
                         ),
                       ],
                     ),
@@ -153,7 +185,7 @@ class _ChatRoomState extends State<ChatRoom> {
                 child: StreamBuilder<QuerySnapshot>(
               stream: FirebaseFirestore.instance
                   .collection('chats')
-                  .doc(widget.driver.userId)
+                  .doc(widget.chatRoomId)
                   .collection('messages')
                   .orderBy('sentAt', descending: true)
                   .snapshots(),
@@ -210,7 +242,9 @@ class _ChatRoomState extends State<ChatRoom> {
                           receiverId: widget.driver.userId,
                           sentAt: Timestamp.now(),
                         );
-
+                        Provider.of<ChatProvider>(context, listen: false)
+                            .sendMessage(widget.chatRoomId, userMessage,
+                                widget.driver.userId!);
                         messageController.clear();
                       },
                       child: const Icon(

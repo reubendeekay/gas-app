@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:gas/helpers/cached_image.dart';
 import 'package:gas/models/request_model.dart';
 import 'package:gas/screens/provider_details/product_widget.dart';
 
@@ -12,14 +11,8 @@ class PurchasesWidget extends StatelessWidget {
       margin: const EdgeInsets.symmetric(
         horizontal: 5,
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          ProductWidget(
-            product: request.products!.first,
-          ),
-          const Divider(),
-        ],
+      child: ProductWidget(
+        product: request.products!.first,
       ),
     );
   }

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:gas/constants.dart';
 import 'package:gas/firebase_options.dart';
 import 'package:gas/providers/auth_provider.dart';
+import 'package:gas/providers/chat_provider.dart';
 import 'package:gas/providers/gas_providers.dart';
 import 'package:gas/providers/location_provider.dart';
 import 'package:gas/providers/request_provider.dart';
@@ -34,6 +35,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (ctx) => AuthProvider()),
         ChangeNotifierProvider(create: (ctx) => GasProviders()),
         ChangeNotifierProvider(create: (ctx) => RequestProvider()),
+        ChangeNotifierProvider(create: (ctx) => ChatProvider()),
       ],
       child: GetMaterialApp(
           title: 'Flutter Demo',

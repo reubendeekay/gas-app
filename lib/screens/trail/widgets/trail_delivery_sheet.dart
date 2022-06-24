@@ -1,9 +1,14 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_phone_direct_caller/flutter_phone_direct_caller.dart';
+import 'package:gas/models/driver_model.dart';
+import 'package:gas/models/message_model.dart';
 import 'package:gas/models/request_model.dart';
 import 'package:gas/models/user_model.dart';
 import 'package:gas/providers/auth_provider.dart';
+import 'package:gas/providers/chat_provider.dart';
 import 'package:gas/providers/location_provider.dart';
 import 'package:gas/providers/request_provider.dart';
 import 'package:gas/screens/chat/chatroom.dart';
@@ -67,7 +72,7 @@ class TrailDeliverySheet extends StatelessWidget {
                         height: 5,
                       ),
                       DeliveryDriverWidget(
-                        driver: request.driver!,
+                        request: request,
                       ),
                       const Divider(
                         thickness: 2,
@@ -90,11 +95,18 @@ class TrailDeliverySheet extends StatelessWidget {
   }
 }
 
-class DeliveryDriverWidget extends StatelessWidget {
-  const DeliveryDriverWidget({Key? key, required this.driver})
+class DeliveryDriverWidget extends StatefulWidget {
+  const DeliveryDriverWidget({Key? key, required this.request})
       : super(key: key);
-  final UserModel driver;
+  final RequestModel request;
 
+  @override
+  State<DeliveryDriverWidget> createState() => _DeliveryDriverWidgetState();
+}
+
+class _DeliveryDriverWidgetState extends State<DeliveryDriverWidget> {
+  String messageText = '';
+  final messageController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -107,7 +119,7 @@ class DeliveryDriverWidget extends StatelessWidget {
               CircleAvatar(
                 radius: 26,
                 backgroundImage: CachedNetworkImageProvider(
-                  driver.profilePic!,
+                  widget.request.driver!.user!.profilePic!,
                 ),
               ),
               const SizedBox(
@@ -117,14 +129,14 @@ class DeliveryDriverWidget extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    driver.fullName!,
+                    widget.request.driver!.user!.fullName!,
                     style: const TextStyle(fontSize: 16),
                   ),
                   const SizedBox(
                     height: 2.5,
                   ),
                   Text(
-                    driver.plateNumber ?? 'No Plate Number',
+                    widget.request.driver!.plateNumber ?? 'No Plate Number',
                     style: const TextStyle(color: Colors.grey),
                   ),
                 ],
@@ -139,7 +151,8 @@ class DeliveryDriverWidget extends StatelessWidget {
             children: [
               InkWell(
                 onTap: () async {
-                  await FlutterPhoneDirectCaller.callNumber(driver.phone!);
+                  await FlutterPhoneDirectCaller.callNumber(
+                      widget.request.driver!.user!.phone!);
                 },
                 child: Container(
                   padding: const EdgeInsets.all(8),
@@ -157,9 +170,40 @@ class DeliveryDriverWidget extends StatelessWidget {
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(20),
                     child: TextFormField(
-                        onEditingComplete: () {
-                          Get.to(() => ChatRoom(driver));
+                        onChanged: (val) {
+                          setState(() {
+                            messageText = val;
+                          });
                         },
+                        controller: messageController,
+                        onEditingComplete: () async {
+                          if (messageText.isNotEmpty) {
+                            final message = MessageModel(
+                                receiverId: widget.request.driver!.userId,
+                                senderId:
+                                    FirebaseAuth.instance.currentUser!.uid,
+                                message: messageText,
+                                sentAt: Timestamp.now(),
+                                mediaFiles: [],
+                                mediaType: 'text',
+                                isRead: false);
+
+                            Provider.of<ChatProvider>(context, listen: false)
+                                .sendMessage(widget.request.id!, message,
+                                    widget.request.driver!.userId!);
+                            messageController.clear();
+                            Get.to(() => ChatRoom(
+                                  widget.request.driver!,
+                                  chatRoomId: widget.request.id!,
+                                ));
+                          } else {
+                            Get.to(() => ChatRoom(
+                                  widget.request.driver!,
+                                  chatRoomId: widget.request.id!,
+                                ));
+                          }
+                        },
+                        textInputAction: TextInputAction.send,
                         textAlignVertical: TextAlignVertical.center,
                         decoration: InputDecoration(
                             contentPadding: const EdgeInsets.symmetric(
