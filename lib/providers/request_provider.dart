@@ -5,6 +5,8 @@ import 'package:flutter/widgets.dart';
 import 'package:gas/models/request_model.dart';
 import 'package:gas/providers/auth_provider.dart';
 import 'package:gas/providers/notifications_provider.dart';
+import 'package:gas/widgets/loading_screen.dart';
+import 'package:get/route_manager.dart';
 import 'package:provider/provider.dart';
 
 class RequestProvider with ChangeNotifier {
@@ -80,6 +82,7 @@ class RequestProvider with ChangeNotifier {
     await FirebaseFirestore.instance.collection('users').doc(uid).update({
       'transitId': null,
     });
+    Get.offAll(() => const InitialLoadingScreen());
 
     notifyListeners();
   }
