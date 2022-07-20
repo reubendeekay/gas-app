@@ -28,22 +28,14 @@ class TrailDeliverySheet extends StatelessWidget {
     return SingleChildScrollView(
       child: Column(
         children: [
-          SizedBox(
-            height: size.height - 225,
+          IgnorePointer(
+            ignoring: true,
+            child: SizedBox(
+              height: size.height - 225,
+            ),
           ),
           request.driver == null
-              ? GestureDetector(
-                  onTap: () async {
-                    final user =
-                        Provider.of<AuthProvider>(context, listen: false).user!;
-
-                    final locData =
-                        Provider.of<LocationProvider>(context, listen: false)
-                            .userLocation!;
-                    await Provider.of<RequestProvider>(context, listen: false)
-                        .sendDriverAcceptance(request, user, locData.location!);
-                  },
-                  child: const DeliveryDriverProcessing())
+              ? const DeliveryDriverProcessing()
               : Container(
                   width: size.width,
                   decoration: const BoxDecoration(

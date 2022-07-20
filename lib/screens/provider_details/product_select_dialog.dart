@@ -1,7 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:gas/constants.dart';
+import 'package:gas/helpers/distance_helper.dart';
+import 'package:gas/helpers/lists.dart';
 import 'package:gas/models/product_model.dart';
+import 'package:gas/models/provider_model.dart';
 import 'package:gas/models/request_model.dart';
 import 'package:gas/providers/auth_provider.dart';
 import 'package:gas/providers/location_provider.dart';
@@ -10,10 +13,12 @@ import 'package:get/route_manager.dart';
 import 'package:provider/provider.dart';
 
 class ProductSelectDialog extends StatefulWidget {
-  const ProductSelectDialog({Key? key, required this.product})
+  const ProductSelectDialog(
+      {Key? key, required this.product, required this.provider})
       : super(key: key);
 
   final ProductModel product;
+  final ProviderModel provider;
 
   @override
   State<ProductSelectDialog> createState() => _ProductSelectDialogState();
@@ -24,6 +29,8 @@ class _ProductSelectDialogState extends State<ProductSelectDialog> {
   bool isFinished = false;
   @override
   Widget build(BuildContext context) {
+    final locData =
+        Provider.of<LocationProvider>(context, listen: false).locationData!;
     return SingleChildScrollView(
         child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -42,8 +49,13 @@ class _ProductSelectDialogState extends State<ProductSelectDialog> {
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Row(
                 children: [
-                  const Text(
-                    'Number of litres',
+                  Text(
+                    widget.product.category!
+                            .toString()
+                            .toLowerCase()
+                            .contains('gas')
+                        ? 'Cylinder Type'
+                        : 'Number of litres',
                   ),
                   const Spacer(),
                   InkWell(
@@ -51,7 +63,7 @@ class _ProductSelectDialogState extends State<ProductSelectDialog> {
                       if (litres > 0) {
                         setState(() {
                           litres--;
-                          widget.product.quantity = litres.toDouble();
+                          widget.product.quantity = litres.toInt();
                         });
                       }
                     },
@@ -70,14 +82,20 @@ class _ProductSelectDialogState extends State<ProductSelectDialog> {
                     ),
                   ),
                   Text(
-                    litres.toString(),
+                    widget.product.category!
+                                .toString()
+                                .toLowerCase()
+                                .contains('gas') &&
+                            litres > 0
+                        ? gasQuantities[litres - 1]
+                        : litres.toString(),
                     style: const TextStyle(fontSize: 18),
                   ),
                   InkWell(
                     onTap: () {
                       setState(() {
                         litres++;
-                        widget.product.quantity = litres.toDouble();
+                        widget.product.quantity = litres.toInt();
                       });
                     },
                     child: Container(
@@ -93,6 +111,20 @@ class _ProductSelectDialogState extends State<ProductSelectDialog> {
                         color: Colors.black,
                       ),
                     ),
+                  ),
+                ],
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              Row(
+                children: [
+                  const Text(
+                    'DeliveryFee',
+                  ),
+                  const Spacer(),
+                  Text(
+                    'KES ${(calculateDistance(locData.latitude!, locData.longitude!, widget.provider.location!.latitude, widget.provider.location!.longitude) * 20).toStringAsFixed(0)}',
                   ),
                 ],
               ),
@@ -123,24 +155,30 @@ class _ProductSelectDialogState extends State<ProductSelectDialog> {
                           final user =
                               Provider.of<AuthProvider>(context, listen: false)
                                   .user;
-                          final userLocation = Provider.of<LocationProvider>(
-                                  context,
-                                  listen: false)
-                              .locationData!;
+
                           final request = RequestModel(
                             products: [
                               widget.product,
                             ],
                             user: user,
-                            userLocation: GeoPoint(userLocation.latitude!,
-                                userLocation.longitude!),
+                            userLocation:
+                                GeoPoint(locData.latitude!, locData.longitude!),
                           );
 
+                          request.deliveryFee = (calculateDistance(
+                                      locData.latitude!,
+                                      locData.longitude!,
+                                      widget.provider.location!.latitude,
+                                      widget.provider.location!.longitude) *
+                                  20)
+                              .floorToDouble();
+
                           request.total = request.products!
-                              .map((product) =>
-                                  product.quantity *
-                                  double.parse(product.price!))
-                              .reduce((a, b) => a + b);
+                                  .map((product) =>
+                                      product.quantity *
+                                      double.parse(product.price!))
+                                  .reduce((a, b) => a + b) +
+                              request.deliveryFee!;
                           Get.to(() => CheckoutScreen(
                                 request: request,
                               ));

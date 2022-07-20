@@ -302,6 +302,9 @@ class _SignUpPageState extends State<SignUpPage> {
                         fullName: fullName,
                         email: email,
                         phone: phone,
+                        isAdmin: false,
+                        isProvider: false,
+                        isDriver: false,
                         password: password);
                     try {
                       await Provider.of<AuthProvider>(context, listen: false)

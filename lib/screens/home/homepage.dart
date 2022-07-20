@@ -59,7 +59,7 @@ class _HomepageState extends State<Homepage> {
           icon: await MarkerIcon.downloadResizePicture(
             url: provider.logo!,
 
-            imageSize: (140).toInt(),
+            imageSize: (110).toInt(),
             // borderSize: 10,
             // addBorder: true,
             // borderColor: kPrimaryColor

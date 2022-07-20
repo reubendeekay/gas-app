@@ -8,6 +8,7 @@ import 'package:gas/models/user_model.dart';
 import 'package:gas/providers/location_provider.dart';
 import 'package:geocoder2/geocoder2.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 class AuthProvider with ChangeNotifier {
   UserModel? _user;
@@ -15,16 +16,14 @@ class AuthProvider with ChangeNotifier {
   UserModel? get user => _user;
 
   Future<void> login(String email, String password) async {
-    final userCredential = await FirebaseAuth.instance
+    await FirebaseAuth.instance
         .signInWithEmailAndPassword(email: email, password: password);
-
-    await FirebaseFirestore.instance
-        .collection('users')
-        .doc(userCredential.user!.uid)
-        .get()
-        .then((value) {
-      _user = UserModel.fromJson(value);
-    });
+    await FirebaseMessaging.instance.getToken().then((token) {
+      FirebaseFirestore.instance
+          .collection('users')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .update({'pushToken': token});
+    }).catchError((err) {});
     await getCurrentUser();
 
     notifyListeners();
@@ -41,6 +40,12 @@ class AuthProvider with ChangeNotifier {
         .collection('users')
         .doc(userCredential.user!.uid)
         .set(userModel.toJson());
+    await FirebaseMessaging.instance.getToken().then((token) {
+      FirebaseFirestore.instance
+          .collection('users')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .update({'pushToken': token});
+    }).catchError((err) {});
 
     await getCurrentUser();
     notifyListeners();

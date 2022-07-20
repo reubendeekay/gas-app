@@ -65,7 +65,6 @@ class _RatingScreenState extends State<RatingScreen> {
         Center(
           child: RaisedButton(
             onPressed: () async {
-              print(widget.request.toJson());
               await Provider.of<RequestProvider>(context, listen: false)
                   .sendRating(widget.request, rating, context);
               // ignore: use_build_context_synchronously

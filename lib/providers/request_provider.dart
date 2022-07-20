@@ -3,9 +3,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:gas/models/request_model.dart';
-import 'package:gas/models/user_model.dart';
 import 'package:gas/providers/auth_provider.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:gas/providers/notifications_provider.dart';
 import 'package:provider/provider.dart';
 
 class RequestProvider with ChangeNotifier {
@@ -13,6 +12,8 @@ class RequestProvider with ChangeNotifier {
     final uid = FirebaseAuth.instance.currentUser!.uid;
     final id = FirebaseFirestore.instance.collection('requests').doc().id;
     request.id = id;
+
+    final notification = NotificationsProvider();
 //TO USER REQUEST POOL
     await FirebaseFirestore.instance
         .collection('requests')
@@ -36,52 +37,23 @@ class RequestProvider with ChangeNotifier {
         .doc(id)
         .set(request.toJson());
 
+    await FirebaseFirestore.instance
+        .collection('providers')
+        .doc(request.products!.first.ownerId!)
+        .collection('account')
+        .doc('finances')
+        .update({
+      'balance': FieldValue.increment(request.total!),
+      'totalRevenue': FieldValue.increment(request.total!),
+    });
+
     //SET REQUEST ID TO USER
     await FirebaseFirestore.instance.collection('users').doc(uid).update({
       'transitId': id,
     });
 
-    notifyListeners();
-  }
+    await notification.sendPurchaseRequest(request);
 
-  Future<void> sendDriverAcceptance(RequestModel request, UserModel driver,
-      LatLng driverInitialLocation) async {
-//TO USER REQUEST POOL
-    await FirebaseFirestore.instance
-        .collection('requests')
-        .doc('users')
-        .collection(request.user!.userId!)
-        .doc(request.id!)
-        .update({
-      'driver': driver.toJson(),
-      'driverLocation': GeoPoint(
-          driverInitialLocation.latitude, driverInitialLocation.longitude),
-      'status': 'driver found',
-    });
-//TO SPECIFIC PROVIDER REQUEST POOL
-    await FirebaseFirestore.instance
-        .collection('requests')
-        .doc('providers')
-        .collection(request.products!.first.ownerId!)
-        .doc(request.id!)
-        .update({
-      'driver': driver.toJson(),
-      'driverLocation': GeoPoint(
-          driverInitialLocation.latitude, driverInitialLocation.longitude),
-      'status': 'driver found',
-    });
-//TO COMMON POOL FOR NEARBY DRIVERS
-    await FirebaseFirestore.instance
-        .collection('requests')
-        .doc('common')
-        .collection('drivers')
-        .doc(request.id!)
-        .update({
-      'driver': driver.toJson(),
-      'driverLocation': GeoPoint(
-          driverInitialLocation.latitude, driverInitialLocation.longitude),
-      'status': 'driver found',
-    });
     notifyListeners();
   }
 
@@ -96,11 +68,6 @@ class RequestProvider with ChangeNotifier {
       'ratingCount': FieldValue.increment(1),
     });
     Provider.of<AuthProvider>(context, listen: false).setTransitId(null);
-
-    await FirebaseFirestore.instance.collection('users').doc(uid).update({
-      'transitId': null,
-    });
-
     await FirebaseFirestore.instance
         .collection('requests')
         .doc('users')
@@ -108,6 +75,10 @@ class RequestProvider with ChangeNotifier {
         .doc(request.id!)
         .update({
       'status': 'done',
+    });
+
+    await FirebaseFirestore.instance.collection('users').doc(uid).update({
+      'transitId': null,
     });
 
     notifyListeners();

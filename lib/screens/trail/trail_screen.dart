@@ -60,7 +60,7 @@ class _TrailScreenState extends State<TrailScreen> {
 
 //google cloud api key
   GoogleMapPolyline googleMapPolyline =
-      GoogleMapPolyline(apiKey: "AIzaSyDxbfpRGmq3Wjex1SfTXwySuxQaCiQZxUM");
+      GoogleMapPolyline(apiKey: "AIzaSyDIL1xyrMndlk2dSSSSikdobR8qDjz0jjQ");
 
   void _onMapCreated(GoogleMapController controller) async {
     _controller = controller;
@@ -158,6 +158,10 @@ class _TrailScreenState extends State<TrailScreen> {
                 return LoadingEffect.getSearchLoadingScreen(context);
               }
 
+              if (snapshot.data!.docs.isEmpty) {
+                return LoadingEffect.getSearchLoadingScreen(context);
+              }
+
               final data = RequestModel.fromJson(snapshot.data!.docs.first);
               return Stack(
                 children: [
@@ -242,6 +246,7 @@ class _TrailScreenState extends State<TrailScreen> {
                             onMapCreated: _onMapCreated,
                             markers: _markers,
                             zoomControlsEnabled: false,
+                            polylines: _polylines.values.toSet(),
                             myLocationEnabled: true,
                             myLocationButtonEnabled: true,
                             initialCameraPosition: CameraPosition(
@@ -260,7 +265,19 @@ class _TrailScreenState extends State<TrailScreen> {
                     request: data,
                   ),
                   if (deliveryIndex(data.status) == 2)
-                    DriverFoundeDialog(driver: data.driver!),
+                    DriverFoundeDialog(
+                      driver: data.driver!,
+                      onClose: () async {
+                        final uid = FirebaseAuth.instance.currentUser!.uid;
+                        await FirebaseFirestore.instance
+                            .collection('requests')
+                            .doc('users')
+                            .collection(uid)
+                            .doc(data.id!)
+                            .update({'status': 'on transit'});
+                        setState(() {});
+                      },
+                    ),
                   if (data.status == 'Arrived'.toLowerCase())
                     DriverArrivedDialog(request: data),
                   if (data.status.toLowerCase() == 'delivered' ||

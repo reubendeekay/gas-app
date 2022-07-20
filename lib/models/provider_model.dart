@@ -12,6 +12,7 @@ class ProviderModel {
   final int? ratingCount;
   final GeoPoint? location;
   List<ProductModel>? products;
+  List<String>? categories = [];
 
   ProviderModel(
       {this.name,
@@ -23,6 +24,7 @@ class ProviderModel {
       this.ratingCount,
       this.location,
       this.products,
+      this.categories,
       this.id});
 
   Map<String, dynamic> toJson() {

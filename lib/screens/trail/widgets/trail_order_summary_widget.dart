@@ -31,7 +31,7 @@ class TrailOrderSummaryWidget extends StatelessWidget {
               request.products!.length,
               (index) => orderItem(
                     index.toString(),
-                    amount: request.products![index].quantity,
+                    amount: request.products![index].quantity.toDouble(),
                     title: request.products![index].name!,
                     description: request.products![index].description!,
                   )),

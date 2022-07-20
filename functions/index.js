@@ -84,8 +84,8 @@ exports.notifocations = functions.firestore
 
           const payload = {
             notification: {
-              id: "/notifications/" + doc.id,
-              title: "AutoConnect",
+              id: doc.id,
+              title: doc.type + " Notification",
               body: message,
               badge: "1",
               sound: "default",

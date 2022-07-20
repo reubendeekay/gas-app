@@ -1,26 +1,5 @@
 import 'package:gas/models/product_model.dart';
 
-List<ProductModel> allProducts = [
-  ProductModel(
-      name: 'Super Leaded Petrol',
-      category: 'Petrol',
-      description:
-          'Non veniam occaecat laboris dolore do adipisicing consectetur tempor veniam velit fugiat amet.',
-      price: '151'),
-  ProductModel(
-      name: 'Natural Gas',
-      category: 'Gas',
-      description:
-          'Non veniam occaecat laboris dolore do adipisicing consectetur tempor veniam velit fugiat amet.',
-      price: '87'),
-  ProductModel(
-      name: 'Diesel V2',
-      category: 'Diesel',
-      description:
-          'Non veniam occaecat laboris dolore do adipisicing consectetur tempor veniam velit fugiat amet.',
-      price: '120'),
-];
-
 List<Map<String, dynamic>> paymentMethods = [
   {
     'icon': 'https://www.un.org/sites/un2.un.org/files/mpesa.png',
@@ -58,4 +37,11 @@ List<String> deliveryStatus = [
   'Driver is on the way to pick your order',
   'Driver is on the way to you',
   'Your order is ready for pickup',
+];
+
+List<String> gasQuantities = [
+  '6kg',
+  '13kg',
+  '22.5kg',
+  '50kg',
 ];

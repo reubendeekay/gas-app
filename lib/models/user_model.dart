@@ -8,6 +8,7 @@ class UserModel {
   final String? phone;
   final bool? isProvider;
   final bool? isDriver;
+  final bool? isAdmin;
   String? profilePic;
   String? transitId;
   final String? plateNumber;
@@ -21,6 +22,7 @@ class UserModel {
       this.isProvider,
       this.transitId,
       this.plateNumber,
+      this.isAdmin = false,
       this.userId,
       this.locations,
       this.isDriver = false,
@@ -39,6 +41,7 @@ class UserModel {
           'https://www.business2community.com/wp-content/uploads/2017/08/blank-profile-picture-973460_640.png',
       'transitId': transitId,
       'plateNumber': plateNumber,
+      'isAdmin': isAdmin,
     };
   }
 
@@ -54,6 +57,7 @@ class UserModel {
       transitId: json['transitId'],
       plateNumber: json['plateNumber'],
       isDriver: json['isDriver'],
+      isAdmin: json['isAdmin'],
     );
   }
 }

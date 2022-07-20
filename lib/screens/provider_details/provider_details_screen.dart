@@ -29,10 +29,10 @@ class _ProviderDetailsScreenState extends State<ProviderDetailsScreen> {
   }
 
   Color? majorColor;
+  String categoryDisplay = 'All';
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     Future.delayed(Duration.zero, () async {
       majorColor = await getImagePalette(NetworkImage(widget.provider.logo!));
@@ -125,40 +125,76 @@ class _ProviderDetailsScreenState extends State<ProviderDetailsScreen> {
                 const SizedBox(
                   height: 10,
                 ),
-                Row(
-                  children: [
-                    const SizedBox(
-                      width: 10,
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(children: [
+                    InkWell(
+                      onTap: () {
+                        setState(() {
+                          categoryDisplay = 'All';
+                        });
+                      },
+                      child: ProductCategoryWidget(
+                        category: 'All',
+                        color: categoryDisplay == 'All' ? majorColor : null,
+                      ),
                     ),
-                    ProductCategoryWidget(
-                      category: 'Cooking',
-                      color: majorColor,
-                    ),
-                    ProductCategoryWidget(
-                      category: 'Coconut',
-                      color: majorColor,
-                    ),
-                    ProductCategoryWidget(
-                      category: 'Other',
-                      color: majorColor,
-                    ),
-                  ],
+                    ...widget.provider.categories!
+                        .map((e) => InkWell(
+                              onTap: () {
+                                setState(() {
+                                  categoryDisplay = e;
+                                });
+                              },
+                              child: ProductCategoryWidget(
+                                category: e,
+                                color: categoryDisplay == e ? majorColor : null,
+                              ),
+                            ))
+                        .toList(),
+                  ]),
                 ),
                 const SizedBox(
                   height: 10,
                 ),
                 ...List.generate(
-                    widget.provider.products!.length,
+                    categoryDisplay == 'All'
+                        ? widget.provider.products!.length
+                        : widget.provider.products!
+                            .where((e) => e.category == categoryDisplay)
+                            .toList()
+                            .length,
                     (index) => InkWell(
                           onTap: () {
-                            showModalBottomSheet(
-                                context: context,
-                                builder: (ctx) => ProductSelectDialog(
-                                      product: widget.provider.products![index],
-                                    ));
+                            if (widget.provider.products![index].quantity > 0) {
+                              showModalBottomSheet(
+                                  context: context,
+                                  builder: (ctx) => ProductSelectDialog(
+                                        product: categoryDisplay == 'All'
+                                            ? widget.provider.products![index]
+                                            : widget.provider.products!
+                                                .where((e) =>
+                                                    e.category ==
+                                                    categoryDisplay)
+                                                .toList()[index],
+                                        provider: widget.provider,
+                                      ));
+                            } else {
+                              ScaffoldMessenger.of(context)
+                                  .showSnackBar(const SnackBar(
+                                content: Text(
+                                  'Product is out of stock',
+                                ),
+                                backgroundColor: kIconColor,
+                              ));
+                            }
                           },
                           child: ProductWidget(
-                            product: widget.provider.products![index],
+                            product: categoryDisplay == 'All'
+                                ? widget.provider.products![index]
+                                : widget.provider.products!
+                                    .where((e) => e.category == categoryDisplay)
+                                    .toList()[index],
                           ),
                         )),
               ],

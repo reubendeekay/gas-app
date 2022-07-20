@@ -1,6 +1,4 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:gas/constants.dart';
 import 'package:gas/helpers/distance_helper.dart';
 import 'package:gas/models/provider_model.dart';
@@ -8,7 +6,6 @@ import 'package:gas/providers/location_provider.dart';
 import 'package:gas/screens/provider_details/provider_details_screen.dart';
 import 'package:get/route_manager.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:location/location.dart';
 import 'package:provider/provider.dart';
 
 class ProviderInfo extends StatelessWidget {
@@ -94,123 +91,141 @@ class ProviderInfoCard extends StatelessWidget {
       const SizedBox(
         height: 5,
       ),
-      Container(
-        decoration: BoxDecoration(
-            color: Colors.grey[100],
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(5))),
-        padding: const EdgeInsets.all(20),
-        child: Column(children: [
-          Row(
-            children: [
-              Expanded(
-                  child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+      Stack(
+        clipBehavior: Clip.none,
+        children: [
+          Container(
+            decoration: BoxDecoration(
+                color: Colors.grey[100],
+                borderRadius:
+                    const BorderRadius.vertical(top: Radius.circular(5))),
+            padding: const EdgeInsets.all(20),
+            child: Column(children: [
+              Row(
                 children: [
-                  const Text('Station'),
-                  const SizedBox(
-                    height: 5,
-                  ),
-                  SizedBox(
-                    height: 30,
-                    child: Image.network(provider.logo!),
-                  )
-                ],
-              )),
-              Expanded(
-                  child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: const [
-                    Text('Status'),
-                    SizedBox(
-                      height: 5,
-                    ),
-                    Text(
-                      'Open Now',
-                      style:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                    )
-                  ])),
-            ],
-          ),
-          const SizedBox(
-            height: 25,
-          ),
-          Row(
-            children: [
-              Expanded(
-                  child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text('Ratings'),
-                  const SizedBox(
-                    height: 5,
-                  ),
-                  Row(
+                  Expanded(
+                      child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Icon(
-                        Icons.message_outlined,
-                        color: kIconColor,
-                        size: 20,
-                      ),
+                      const Text('Station'),
                       const SizedBox(
-                        width: 5,
+                        height: 5,
                       ),
-                      Text(
-                        (provider.ratings! / provider.ratingCount!)
-                            .toStringAsFixed(1),
-                        style: const TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.bold),
+                      SizedBox(
+                        height: 30,
+                        child: Image.network(provider.logo!),
                       )
                     ],
-                  ),
-                  const SizedBox(
-                    height: 2.5,
-                  ),
-                  Text(
-                    '${provider.ratingCount} Reviews',
-                    style:
-                        const TextStyle(color: Colors.blueGrey, fontSize: 12),
-                  )
+                  )),
+                  Expanded(
+                      child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: const [
+                        Text('Status'),
+                        SizedBox(
+                          height: 5,
+                        ),
+                        Text(
+                          'Open Now',
+                          style: TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.bold),
+                        )
+                      ])),
                 ],
-              )),
-              Expanded(
-                  child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              ),
+              const SizedBox(
+                height: 25,
+              ),
+              Row(
                 children: [
-                  const Text('Location'),
-                  const SizedBox(
-                    height: 5,
-                  ),
-                  Row(
+                  Expanded(
+                      child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Icon(
-                        Icons.my_location_sharp,
-                        color: kIconColor,
-                        size: 20,
+                      const Text('Ratings'),
+                      const SizedBox(
+                        height: 5,
+                      ),
+                      Row(
+                        children: [
+                          const Icon(
+                            Icons.message_outlined,
+                            color: kIconColor,
+                            size: 20,
+                          ),
+                          const SizedBox(
+                            width: 5,
+                          ),
+                          Text(
+                            (provider.ratings! / provider.ratingCount!)
+                                .toStringAsFixed(1),
+                            style: const TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.bold),
+                          )
+                        ],
                       ),
                       const SizedBox(
-                        width: 5,
+                        height: 2.5,
                       ),
                       Text(
-                        '${calculateDistance(locData!.latitude!, locData.longitude!, provider.location!.latitude, provider.location!.longitude).toStringAsFixed(1)} KM',
+                        '${provider.ratingCount} Reviews',
                         style: const TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.bold),
+                            color: Colors.blueGrey, fontSize: 12),
                       )
                     ],
-                  ),
-                  const SizedBox(
-                    height: 2.5,
-                  ),
-                  Text(
-                    provider.address!,
-                    style:
-                        const TextStyle(color: Colors.blueGrey, fontSize: 12),
-                  )
+                  )),
+                  Expanded(
+                      child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text('Location'),
+                      const SizedBox(
+                        height: 5,
+                      ),
+                      Row(
+                        children: [
+                          const Icon(
+                            Icons.my_location_sharp,
+                            color: kIconColor,
+                            size: 20,
+                          ),
+                          const SizedBox(
+                            width: 5,
+                          ),
+                          Text(
+                            '${calculateDistance(locData!.latitude!, locData.longitude!, provider.location!.latitude, provider.location!.longitude).toStringAsFixed(1)} KM',
+                            style: const TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.bold),
+                          )
+                        ],
+                      ),
+                      const SizedBox(
+                        height: 2.5,
+                      ),
+                      Text(
+                        provider.address!,
+                        style: const TextStyle(
+                            color: Colors.blueGrey, fontSize: 12),
+                      )
+                    ],
+                  ))
                 ],
+              )
+            ]),
+          ),
+          Positioned(
+              top: 0,
+              right: 0,
+              child: Container(
+                padding:
+                    const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                color: Colors.red,
+                child: Text(
+                  'KES ${(calculateDistance(locData.latitude!, locData.longitude!, provider.location!.latitude, provider.location!.longitude) * 20).toStringAsFixed(0)}',
+                  style: const TextStyle(color: Colors.white, fontSize: 14),
+                ),
               ))
-            ],
-          )
-        ]),
+        ],
       ),
       GestureDetector(
         onTap: () {

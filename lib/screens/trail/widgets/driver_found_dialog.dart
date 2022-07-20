@@ -1,14 +1,20 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_phone_direct_caller/flutter_phone_direct_caller.dart';
 import 'package:gas/constants.dart';
 import 'package:gas/helpers/ratings_stars.dart';
 import 'package:gas/models/driver_model.dart';
-import 'package:gas/models/user_model.dart';
+import 'package:gas/screens/trail/trail_screen.dart';
+import 'package:get/route_manager.dart';
 
 class DriverFoundeDialog extends StatefulWidget {
-  const DriverFoundeDialog({Key? key, required this.driver}) : super(key: key);
+  const DriverFoundeDialog(
+      {Key? key, required this.driver, required this.onClose})
+      : super(key: key);
   final DriverModel driver;
+  final Function onClose;
 
   @override
   State<DriverFoundeDialog> createState() => _DriverFoundeDialogState();
@@ -25,6 +31,7 @@ class _DriverFoundeDialogState extends State<DriverFoundeDialog> {
           builder: (ctx) => Dialog(
                 child: DriverFound(
                   driver: widget.driver,
+                  onClose: widget.onClose,
                 ),
               ));
     });
@@ -37,8 +44,10 @@ class _DriverFoundeDialogState extends State<DriverFoundeDialog> {
 }
 
 class DriverFound extends StatefulWidget {
-  const DriverFound({Key? key, required this.driver}) : super(key: key);
+  const DriverFound({Key? key, required this.driver, required this.onClose})
+      : super(key: key);
   final DriverModel driver;
+  final Function onClose;
 
   @override
   State<DriverFound> createState() => _DriverFoundState();
@@ -50,6 +59,7 @@ class _DriverFoundState extends State<DriverFound> {
     super.initState();
     Future.delayed(const Duration(seconds: 10), () {
       Navigator.of(context).pop();
+      widget.onClose();
     });
   }
 
@@ -128,8 +138,10 @@ class _DriverFoundState extends State<DriverFound> {
               child: RaisedButton(
                 color: kPrimaryColor,
                 textColor: Colors.white,
-                onPressed: () {
+                onPressed: () async {
                   Navigator.pop(context);
+
+                  widget.onClose();
                 },
                 child: const Text(
                   'OKAY',

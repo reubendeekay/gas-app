@@ -18,23 +18,36 @@ class ProductWidget extends StatelessWidget {
             children: [
               Text(
                 product.name!,
-                style:
-                    const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    decoration: product.quantity < 1
+                        ? TextDecoration.lineThrough
+                        : null),
               ),
               const SizedBox(
                 height: 3,
               ),
               Text(
                 'KES ${product.price!}',
-                style: const TextStyle(
-                    fontWeight: FontWeight.bold, color: kIconColor),
+                style: TextStyle(
+                    decoration: product.quantity < 1
+                        ? TextDecoration.lineThrough
+                        : null,
+                    fontWeight: FontWeight.bold,
+                    color: kIconColor),
               ),
               const SizedBox(
                 height: 5,
               ),
               Text(
                 product.description!,
-                style: TextStyle(fontSize: 12, color: Colors.grey[400]),
+                style: TextStyle(
+                    decoration: product.quantity < 1
+                        ? TextDecoration.lineThrough
+                        : null,
+                    fontSize: 12,
+                    color: Colors.grey[400]),
               ),
             ],
           ),

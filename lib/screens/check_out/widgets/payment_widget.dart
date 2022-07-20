@@ -3,6 +3,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:gas/constants.dart';
+import 'package:gas/helpers/mpesa_helper.dart';
+import 'package:gas/helpers/phone_number_helper.dart';
 import 'package:gas/models/product_model.dart';
 import 'package:gas/models/request_model.dart';
 import 'package:gas/providers/auth_provider.dart';
@@ -71,8 +73,15 @@ class _PaymentWidgetState extends State<PaymentWidget> {
             ),
             activeColor: kPrimaryColor,
             isFinished: isFinished,
-            onWaitingProcess: () {
-              Future.delayed(const Duration(milliseconds: 500), () {
+            onWaitingProcess: () async {
+              await Future.delayed(const Duration(milliseconds: 2), () async {
+                if (widget.paymentMethod.toLowerCase() == 'm-pesa') {
+                  await mpesaPayment(
+                    phone: phoneNumberHelper(user!.phone!),
+                    amount: widget.request.total!,
+                  );
+                }
+
                 setState(() {
                   isFinished = true;
                 });
@@ -85,6 +94,7 @@ class _PaymentWidgetState extends State<PaymentWidget> {
                   user: widget.request.user,
                   userLocation: widget.request.userLocation,
                   paymentMethod: widget.request.paymentMethod,
+                  deliveryFee: widget.request.deliveryFee,
                   total: widget.request.total,
                   createdAt: Timestamp.now(),
                   status: 'pending');
@@ -95,7 +105,6 @@ class _PaymentWidgetState extends State<PaymentWidget> {
                   PageTransition(
                       type: PageTransitionType.fade,
                       child: const TrailScreen()));
-
               setState(() {
                 isFinished = false;
               });

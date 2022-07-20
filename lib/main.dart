@@ -9,7 +9,7 @@ import 'package:gas/providers/gas_providers.dart';
 import 'package:gas/providers/location_provider.dart';
 import 'package:gas/providers/request_provider.dart';
 import 'package:gas/screens/auth/login.dart';
-import 'package:gas/screens/home/homepage.dart';
+
 import 'package:gas/widgets/loading_screen.dart';
 import 'package:get/route_manager.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -38,7 +38,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (ctx) => ChatProvider()),
       ],
       child: GetMaterialApp(
-          title: 'Flutter Demo',
+          title: 'Gas App',
           debugShowCheckedModeBanner: false,
           theme: ThemeData(
               primarySwatch: MaterialColor(

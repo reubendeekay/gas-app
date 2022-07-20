@@ -5,6 +5,7 @@ import 'package:gas/screens/home/homepage_provider_widget.dart';
 import 'package:gas/widgets/loading_effect.dart';
 import 'package:gas/widgets/my_text_field.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 
 class SearchOverviewScreen extends StatefulWidget {
@@ -41,6 +42,16 @@ class _SearchOverviewScreenState extends State<SearchOverviewScreen> {
               prefixIcon: Iconsax.search_favorite,
             ),
           ),
+          if (searchTerm == null)
+            Expanded(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Lottie.asset('assets/searching.json'),
+                  const Text('Search for a provider or gas product'),
+                ],
+              ),
+            ),
           if (searchTerm != null)
             FutureBuilder<List<ProviderModel>>(
               future: Provider.of<GasProviders>(context, listen: false)

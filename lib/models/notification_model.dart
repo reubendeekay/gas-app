@@ -25,4 +25,13 @@ class NotificationsModel {
       createdAt: json['createdAt'],
     );
   }
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'message': message,
+        'imageUrl': imageUrl,
+        'type': type,
+        'senderId': senderId,
+        'createdAt': createdAt,
+      };
 }
