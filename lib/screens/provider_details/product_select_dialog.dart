@@ -155,10 +155,12 @@ class _ProductSelectDialogState extends State<ProductSelectDialog> {
                           final user =
                               Provider.of<AuthProvider>(context, listen: false)
                                   .user;
+                          final thisProduct = widget.product;
+                          thisProduct.quantity = litres;
 
                           final request = RequestModel(
                             products: [
-                              widget.product,
+                              thisProduct,
                             ],
                             user: user,
                             userLocation:
