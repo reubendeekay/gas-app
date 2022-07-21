@@ -77,17 +77,7 @@ class AuthProvider with ChangeNotifier {
         .collection('locations')
         .get();
 
-    List<UserLocation> locationData = [];
-
-    for (var doc in locations.docs) {
-      locationData.add(
-        await getLocationDetails(
-          LatLng(doc['location'].latitude, doc['location'].longitude),
-        ),
-      );
-    }
-
-    return locationData;
+    return locations.docs.map((e) => UserLocation.fromJson(e)).toList();
   }
 
   Future<UserLocation> getLocationDetails(LatLng loc) async {
@@ -103,7 +93,7 @@ class AuthProvider with ChangeNotifier {
       postalCode: data.postalCode,
       address: data.address,
       state: data.state,
-      location: LatLng(loc.latitude, loc.longitude),
+      location: GeoPoint(loc.latitude, loc.longitude),
     );
   }
 

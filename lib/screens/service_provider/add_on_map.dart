@@ -1,5 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:gas/constants.dart';
+import 'package:gas/providers/auth_provider.dart';
 import 'package:gas/providers/location_provider.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
@@ -51,6 +54,17 @@ class _AddOnMapState extends State<AddOnMap> {
               final userLoc =
                   await Provider.of<LocationProvider>(context, listen: false)
                       .getLocationDetails(value);
+
+              final uid = FirebaseAuth.instance.currentUser!.uid;
+
+              await FirebaseFirestore.instance
+                  .collection('users')
+                  .doc(uid)
+                  .collection('locations')
+                  .doc()
+                  .set(userLoc.toJson());
+              Provider.of<AuthProvider>(context, listen: false)
+                  .getCurrentUser();
               widget.onSelectUserLocation!(userLoc);
             }
 

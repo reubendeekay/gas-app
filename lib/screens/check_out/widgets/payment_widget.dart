@@ -11,7 +11,9 @@ import 'package:gas/providers/auth_provider.dart';
 import 'package:gas/providers/location_provider.dart';
 import 'package:gas/providers/request_provider.dart';
 import 'package:gas/screens/check_out/check_out_screen.dart';
+import 'package:gas/screens/check_out/paypal_payment.dart';
 import 'package:gas/screens/trail/trail_screen.dart';
+import 'package:get/route_manager.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 import 'package:swipeable_button_view/swipeable_button_view.dart';
@@ -80,6 +82,8 @@ class _PaymentWidgetState extends State<PaymentWidget> {
                     phone: phoneNumberHelper(user!.phone!),
                     amount: widget.request.total!,
                   );
+                } else if (widget.paymentMethod.toLowerCase() == 'paypal') {
+                  Get.to(() => PaypalPayment(request: widget.request));
                 }
 
                 setState(() {

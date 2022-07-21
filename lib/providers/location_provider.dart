@@ -1,10 +1,11 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 import 'package:geocoder2/geocoder2.dart';
 
 class UserLocation {
-  final LatLng? location;
+  final GeoPoint? location;
   final String? city;
   final String? country;
   final String? street;
@@ -20,6 +21,30 @@ class UserLocation {
       this.street,
       this.postalCode,
       this.state});
+
+  Map<String, dynamic> toJson() {
+    return {
+      'location': GeoPoint(location?.latitude ?? 0, location?.longitude ?? 0),
+      'city': city,
+      'country': country,
+      'street': street,
+      'postalCode': postalCode,
+      'state': state,
+      'address': address,
+    };
+  }
+
+  factory UserLocation.fromJson(dynamic json) {
+    return UserLocation(
+      location: json['location'],
+      city: json['city'],
+      country: json['country'],
+      street: json['street'],
+      postalCode: json['postalCode'],
+      state: json['state'],
+      address: json['address'],
+    );
+  }
 }
 
 class LocationProvider with ChangeNotifier {
@@ -78,7 +103,7 @@ class LocationProvider with ChangeNotifier {
       postalCode: data.postalCode,
       address: data.address,
       state: data.state,
-      location: LatLng(_locationData!.latitude!, _locationData!.longitude!),
+      location: GeoPoint(_locationData!.latitude!, _locationData!.longitude!),
     );
 
     notifyListeners();
@@ -111,7 +136,7 @@ class LocationProvider with ChangeNotifier {
       postalCode: data.postalCode,
       address: data.address,
       state: data.state,
-      location: LatLng(_locationData!.latitude!, _locationData!.longitude!),
+      location: GeoPoint(_locationData!.latitude!, _locationData!.longitude!),
     );
   }
 }
