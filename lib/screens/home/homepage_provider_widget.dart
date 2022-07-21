@@ -94,7 +94,7 @@ class HomepageProviderWidget extends StatelessWidget {
                               () => ProviderDetailsScreen(provider: provider));
                         },
                         child: const Text(
-                          'More Details',
+                          'View Profile',
                           style: TextStyle(fontSize: 12, color: kIconColor),
                         ),
                       ),

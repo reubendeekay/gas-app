@@ -37,6 +37,7 @@ class LocationProvider with ChangeNotifier {
     return _userLocation;
   }
 
+  List<Map<String, dynamic>> _addressList = [];
   Future<void> getCurrentLocation() async {
     //using location package
     Location location = Location();
@@ -83,14 +84,17 @@ class LocationProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  List preferredUserLocations() {
+  List preferredUserLocations({Map<String, dynamic>? locations}) {
     final currentLocation = {
       'title': 'Current Location',
       'address': userLocation!.address,
     };
-
+    if (locations != null) {
+      _addressList.add(locations);
+    }
     return [
       currentLocation,
+      ..._addressList,
     ];
   }
 

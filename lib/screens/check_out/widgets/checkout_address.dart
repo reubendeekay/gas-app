@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:gas/constants.dart';
+import 'package:gas/providers/location_provider.dart';
+import 'package:gas/screens/service_provider/add_on_map.dart';
+import 'package:get/route_manager.dart';
+import 'package:provider/provider.dart';
 
 class CheckoutAddress extends StatelessWidget {
   const CheckoutAddress(
@@ -74,13 +78,27 @@ class CheckoutAddress extends StatelessWidget {
             itemBuilder: (context) {
               return const [
                 PopupMenuItem(
-                  child: Text('Edit'),
+                  child: Text('Add'),
+                  value: 1,
                 ),
                 PopupMenuItem(
-                  child: Text('Delete'),
+                  child: Text('Edit'),
                 ),
               ];
-            }),
+            },
+            onSelected: (value) {
+              if (value == 1) {
+                Get.to(() => AddOnMap(onSelectUserLocation: (loc) {
+                      Provider.of<LocationProvider>(context, listen: false)
+                          .preferredUserLocations(
+                        locations: {
+                          'title': loc.address,
+                          'address': loc.state,
+                        },
+                      );
+                    }));
+              }
+            })
       ]),
     );
   }

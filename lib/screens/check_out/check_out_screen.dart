@@ -21,8 +21,9 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   int selectedPaymentMethod = 0;
   @override
   Widget build(BuildContext context) {
-    final userlocations = Provider.of<LocationProvider>(context, listen: false)
-        .preferredUserLocations();
+    final userlocations = Provider.of<LocationProvider>(
+      context,
+    ).preferredUserLocations();
 
     return Scaffold(
       appBar: AppBar(
