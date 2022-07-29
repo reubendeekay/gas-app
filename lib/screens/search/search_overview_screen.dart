@@ -79,8 +79,10 @@ class _SearchOverviewScreenState extends State<SearchOverviewScreen> {
                     padding: EdgeInsets.zero,
                     children: List.generate(
                       snapshot.data!.length,
-                      (i) =>
-                          HomepageProviderWidget(provider: snapshot.data![i]),
+                      (i) => HomepageProviderWidget(
+                        provider: snapshot.data![i],
+                        isHome: false,
+                      ),
                     ),
                   ),
                 );

@@ -104,7 +104,9 @@ class _PaymentWidgetState extends State<PaymentWidget> {
                   status: 'pending');
               await Provider.of<RequestProvider>(context, listen: false)
                   .sendPurchaseRequest(request);
-              await Navigator.push(
+              Navigator.of(context).pop();
+              Navigator.of(context).pop();
+              await Navigator.pushReplacement(
                   context,
                   PageTransition(
                       type: PageTransitionType.fade,

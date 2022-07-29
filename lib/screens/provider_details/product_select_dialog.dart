@@ -87,9 +87,7 @@ class _ProductSelectDialogState extends State<ProductSelectDialog> {
                                 .toLowerCase()
                                 .contains('gas') &&
                             litres > 0
-                        ? litres > 3
-                            ? gasQuantities[4] * (litres - 3)
-                            : gasQuantities[litres - 1]
+                        ? gasQuantities[litres - 1]
                         : litres.toString(),
                     style: const TextStyle(fontSize: 18),
                   ),
@@ -97,7 +95,15 @@ class _ProductSelectDialogState extends State<ProductSelectDialog> {
                     onTap: () {
                       if (litres <= widget.product.quantity) {
                         setState(() {
-                          litres++;
+                          if (widget.product.category!
+                                  .toString()
+                                  .toLowerCase()
+                                  .contains('gas') &&
+                              litres <= 4) {
+                            litres++;
+                          } else {
+                            litres++;
+                          }
                           widget.product.quantity = litres.toInt();
                         });
                       } else {

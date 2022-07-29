@@ -35,7 +35,10 @@ class FrequentProvidersScreen extends StatelessWidget {
             return ListView.builder(
               itemCount: snapshot.data!.length,
               itemBuilder: (ctx, index) {
-                return HomepageProviderWidget(provider: snapshot.data![index]);
+                return HomepageProviderWidget(
+                  provider: snapshot.data![index],
+                  isHome: false,
+                );
               },
             );
           },

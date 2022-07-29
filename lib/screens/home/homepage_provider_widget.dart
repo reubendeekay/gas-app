@@ -9,8 +9,10 @@ import 'package:get/route_manager.dart';
 import 'package:provider/provider.dart';
 
 class HomepageProviderWidget extends StatelessWidget {
-  const HomepageProviderWidget({Key? key, required this.provider})
+  const HomepageProviderWidget(
+      {Key? key, required this.provider, this.isHome = true})
       : super(key: key);
+  final bool isHome;
 
   final ProviderModel provider;
 
@@ -22,7 +24,7 @@ class HomepageProviderWidget extends StatelessWidget {
     return Stack(
       children: [
         Container(
-          width: size.width * 0.85,
+          width: isHome ? size.width * 0.85 : size.width,
           margin: const EdgeInsets.all(10),
           padding: const EdgeInsets.all(18),
           decoration: BoxDecoration(
