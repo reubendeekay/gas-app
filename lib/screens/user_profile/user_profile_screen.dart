@@ -102,7 +102,13 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                     height: 5,
                   ),
                   MyTextField(
-                      hintText: user.fullName!, prefixIcon: Iconsax.user),
+                      onChanged: (val) {
+                        setState(() {
+                          name = val;
+                        });
+                      },
+                      hintText: user.fullName!,
+                      prefixIcon: Iconsax.user),
                   const SizedBox(
                     height: 15,
                   ),
@@ -114,6 +120,11 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                     height: 5,
                   ),
                   MyTextField(
+                    onChanged: (val) {
+                      setState(() {
+                        email = val;
+                      });
+                    },
                     hintText: user.email!,
                     prefixIcon: Icons.email_outlined,
                   ),
@@ -128,6 +139,11 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                     height: 5,
                   ),
                   MyTextField(
+                    onChanged: (val) {
+                      setState(() {
+                        phone = val;
+                      });
+                    },
                     hintText: user.phone!,
                     prefixIcon: Iconsax.call,
                   ),
@@ -160,6 +176,13 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                     email: email ?? user.email,
                     phone: phone ?? user.phone,
                     fullName: name ?? user.fullName,
+                    isAdmin: user.isAdmin,
+                    profilePic: user.profilePic,
+                    isDriver: user.isDriver,
+                    isProvider: user.isProvider,
+                    password: user.password,
+                    plateNumber: user.plateNumber,
+                    userId: user.userId,
                   );
 
                   try {

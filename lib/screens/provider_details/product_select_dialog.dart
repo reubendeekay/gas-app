@@ -87,16 +87,26 @@ class _ProductSelectDialogState extends State<ProductSelectDialog> {
                                 .toLowerCase()
                                 .contains('gas') &&
                             litres > 0
-                        ? gasQuantities[litres - 1]
+                        ? litres > 3
+                            ? gasQuantities[4] * (litres - 3)
+                            : gasQuantities[litres - 1]
                         : litres.toString(),
                     style: const TextStyle(fontSize: 18),
                   ),
                   InkWell(
                     onTap: () {
-                      setState(() {
-                        litres++;
-                        widget.product.quantity = litres.toInt();
-                      });
+                      if (litres <= widget.product.quantity) {
+                        setState(() {
+                          litres++;
+                          widget.product.quantity = litres.toInt();
+                        });
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          content: Text(
+                              'You can not select more than ${widget.product.quantity} litres'),
+                          backgroundColor: Colors.red,
+                        ));
+                      }
                     },
                     child: Container(
                       padding: const EdgeInsets.all(8),

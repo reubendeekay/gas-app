@@ -22,7 +22,8 @@ class NotificationsScreen extends StatelessWidget {
               .collection('userData')
               .doc(uid)
               .collection('notifications')
-              .orderBy('createdAt')
+              .where('createdAt', isNull: false)
+              .orderBy('createdAt', descending: true)
               .snapshots(),
           builder: (context, snapshot) {
             if (!snapshot.hasData) {

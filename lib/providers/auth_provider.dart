@@ -102,6 +102,7 @@ class AuthProvider with ChangeNotifier {
         .collection('users')
         .doc(userData.userId)
         .update(userData.toJson());
+    getCurrentUser();
     notifyListeners();
   }
 
